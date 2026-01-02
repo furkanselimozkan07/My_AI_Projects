@@ -1,0 +1,29 @@
+00:13:26	Dicle KAYA:	bekleyin hocam az kaldı
+00:15:37	Ömer:	Bu proje, Titanic gemisi yolcularının hayatta kalıp kalmayacağını tahmin etmeyi amaçlayan bir sınıflandırma problemidir. Katılımcılar, verilen yolcu bilgilerini kullanarak bir makine öğrenmesi modeli geliştirir. Amaç, test verisi üzerindeki hayatta kalma tahminlerinin doğruluğunu maksimize etmektir.
+00:15:51	Dicle KAYA:	evet
+00:17:19	Ömer:	https://www.kaggle.com/competitions/titanic/data?select=gender_submission.csv
+00:19:54	Mustafa Kerem KAHYA:	1. Projenin amacını ve içeriğini anla👉 Proje neyi hedefliyor? Regresyon, sınıflandırma veya kümeleme problemi mi? Bu belirlenmeli.2. Veriyi oku ve incele (EDA)👉 pandas ile veriyi içe aktar, df.info(), df.describe() ve df.isnull().sum() gibi komutlarla genel durumu gözlemle.3. Modelde kullanmak için uygun sütunları belirle👉 Hedef değişken (target) dışındaki anlamlı ve modelle ilişkili sütunları seç.4. Kategorik (object) sütunlardan sayısala çevrilebilecek olanları dönüştür👉 Örneğin: yaş gibi sayılar string olarak girildiyse bunları numeric'e çevirmelisin.5. Veri manipülasyonları yap (eksik değerleri doldur, hatalı verileri düzelt)👉 fillna(), replace(), str.strip() gibi işlemlerle veri temizliği sağla.
+00:20:02	Mustafa Kerem KAHYA:	6. Feature Engineering (özellik mühendisliği) uygula👉 Yeni sütunlar üret.7. Kategorik değişkenlere get_dummies uygula (One-hot encoding)👉 Modelin anlayabilmesi için pd.get_dummies() ile kategorik verileri sayısallaştır.8. Veriyi X ve y olarak ayır (regresyon/sınıflandırma) veya sadece X (kümeleme)👉 X: giriş verileri, y: hedef değişken. Kümeleme yapacaksan sadece X yeterli.9. Modeli eğit ve tahmin et (fit-predict)👉 Seçilen modele göre model.fit(X_train, y_train) ve model.predict(X_test) işlemlerini uygula.10. Modelin doğruluk oranını ölç👉 Sınıflandırma için accuracy_score, regresyon için r2_score, mean_squared_error gibi metriklerle performansı değerlendir.
+00:46:11	Ömer:	survived_sex_distribution = df[df['Survived'] == 1]['Sex'].value_counts()not_survived_sex_distribution = df[df['Survived'] == 0]['Sex'].value_counts()labels_survived = survived_sex_distribution.indexsizes_survived = survived_sex_distribution.valueslabels_not_survived = not_survived_sex_distribution.indexsizes_not_survived = not_survived_sex_distribution.valuescolors = ['#ff9999', '#66b3ff']fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(14, 7))ax1.pie(sizes_survived, labels=labels_survived, autopct='%1.1f%%', colors=colors, startangle=140)ax1.set_title('Sex Distribution of Survivors')colors = ['#66b3ff','#ff9999']ax2.pie(sizes_not_survived, labels=labels_not_survived, autopct='%1.1f%%', colors=colors, startangle=140)ax2.set_title('Sex Distribution of Non-Survivors')plt.show()plt.show()
+01:06:00	Harun Demircioglu:	iki adet mode da olabilir
+01:07:34	Harun Demircioglu:	Bence bozariz
+01:12:53	Mustafa Kerem KAHYA:	hocam neden \ koydunuz
+01:20:09	Ömer:	df['Title']= df['Title'].replace(['Rev','Dr','Col','Major','Sir','Don','Capt','Jonkheer'],'Mr')
+01:25:27	Ömer:	df['Title']= df['Title'].replace(['Lady','Countess','Dona','Mme'],'Mrs')
+01:28:18	Ömer:	df['Age']=df['Age'].fillna(df.groupby('Title')['Age'].transform('mean'))
+01:40:34	Ömer:	del df['Name']
+01:40:38	Ömer:	del df['Ticket']
+01:40:41	Ömer:	del df['Embarked']
+01:47:49	feyza Gökce:	hocam devam edemeyeceğim. chati de paylaşır mısınız sonra
+01:48:06	Ömer:	from sklearn.model_selection import train_test_splitfrom sklearn.metrics import accuracy_score, confusion_matrix, classification_reportfrom sklearn.ensemble import RandomForestClassifierfrom sklearn.ensemble import GradientBoostingClassifier
+01:48:43	Ömer:	from sklearn.ensemble import RandomForestClassifierfrom sklearn.ensemble import GradientBoostingClassifier
+01:50:46	Ömer:	r=RandomForestClassifier()g=GradientBoostingClassifier()
+01:59:53	Ömer:	tahmin=r.predict(test)
+01:59:55	Ömer:	sonuc=pd.DataFrame()
+02:00:02	Ömer:	test=test.drop(['PassengerId','Survived'],axis=1)
+02:00:07	Ömer:	sonuc['Survived']=tahmin
+02:00:09	Ömer:	sonuc['PassengerId']=df2['PassengerId']
+02:01:23	Ömer:	sonuc.to_csv('sonuc1.csv',index=False)
+02:05:45	birgul:	Hocam bu Titanic sonucunu verecegimiz yerin adresini paylasirmisiniz
+02:05:52	Ömer:	https://www.kaggle.com/competitions/titanic/data?select=gender_submission.csv
+02:08:01	Ömer:	sonuc['Survived']=sonuc['Survived'].astype('int32')
