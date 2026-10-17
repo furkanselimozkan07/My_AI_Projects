@@ -1,0 +1,389 @@
+<!doctype html>
+<html lang="tr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="description" content="Biyo-Midye: kanal başındaki elektriksiz filtre kasetinin etkileşimli 3D saha simülasyonu (COP31 Gençlik İklim İdeathonu, 9. Grup, Erzurum).">
+<title>Biyo-Midye Saha Simülatörü</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Barlow+Condensed:wght@600;700;800&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Düzen: solda büyük 3D saha görünümü + üstüne cam ölçüm panelleri; sağda kontrol masası (giriş / çıkış / simülasyon); altta model ve kaynaklar. Tek koyu tema (saha ekranı). */
+:root{
+  --bg:#06112b; --panel:#0b1a3f; --panel2:#10235a; --line:#24407f; --fg:#eef3ff; --muted:#9fb0d9;
+  --cyan:#11ddeD; --amber:#fcb606; --orange:#ff7a1a; --violet:#b46cff; --green:#2bd98a; --red:#ff4d5e;
+  --f-disp:"Barlow Condensed","Arial Narrow",Arial,sans-serif; --f-body:"Barlow",Arial,sans-serif; --f-mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+  color-scheme:dark;
+}
+html,body{height:auto}
+body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:15px;line-height:1.45;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:14px 40px}
+*{box-sizing:border-box}
+.wrap{max-width:1500px;margin:0 auto;display:flex;flex-direction:column;gap:16px}
+header{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px}
+.brand small{display:block;font-family:var(--f-disp);letter-spacing:.18em;color:var(--cyan);font-size:14px;font-weight:700}
+h1{font-family:var(--f-disp);font-weight:800;font-size:clamp(28px,4vw,46px);line-height:1;margin:2px 0 0;text-wrap:balance}
+h1 b{color:var(--cyan)}
+.views{display:flex;gap:6px;flex-wrap:wrap}
+.views button,.btn{font:600 14px var(--f-body);color:var(--fg);background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:8px 16px;cursor:pointer}
+.views button[aria-pressed="true"]{background:var(--cyan);color:#06112b;border-color:var(--cyan)}
+.views button:focus-visible,.btn:focus-visible,input:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
+.main{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:16px;align-items:start}
+@media (max-width:980px){.main{grid-template-columns:minmax(0,1fr)}}
+.stage{position:relative;border-radius:18px;overflow:hidden;border:1px solid var(--line);background:#0d2148;aspect-ratio:16/10;max-width:100%}
+@media (max-width:640px){.stage{aspect-ratio:4/5}}
+.stage canvas{display:block;width:100%;height:100%}
+.hud{position:absolute;left:12px;top:12px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;width:min(560px,calc(100% - 24px));pointer-events:none}
+@media (max-width:640px){.hud{grid-template-columns:repeat(3,minmax(0,1fr));gap:5px;left:8px;top:8px;width:calc(100% - 16px)}.hud .x{display:none}.m{padding:5px 7px}.m b{font-size:14px}.spark{display:none}.status{top:auto;bottom:8px;right:8px}.lbl{font-size:11px}}
+.m{background:rgba(6,17,43,.78);backdrop-filter:blur(6px);border:1px solid rgba(17,221,237,.28);border-radius:12px;padding:7px 10px}
+.m span{display:block;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.m b{font-family:var(--f-mono);font-size:18px;font-weight:600;font-variant-numeric:tabular-nums}
+.m b i{font-style:normal;font-size:12px;color:var(--muted);margin-left:3px}
+.m.hi{border-color:var(--cyan)} .m.hi b{color:var(--cyan)}
+.status{position:absolute;right:12px;top:12px;display:flex;flex-direction:column;gap:6px;align-items:flex-end;max-width:calc(100% - 24px)}
+.chip{font:700 13px var(--f-body);border-radius:999px;padding:6px 12px;background:var(--green);color:#06221a}
+.chip.warn{background:var(--amber);color:#2a1d00}.chip.bad{background:var(--red);color:#fff}
+.lbl{position:absolute;transform:translate(-50%,-120%);font:700 13px var(--f-body);background:rgba(6,17,43,.85);border:1.5px solid var(--cyan);border-radius:8px;padding:3px 9px;white-space:nowrap;pointer-events:none}
+.lbl.o{border-color:var(--orange)} .lbl.g{border-color:var(--green)}
+.spark{position:absolute;left:12px;bottom:12px;width:min(340px,calc(100% - 24px));background:rgba(6,17,43,.8);border:1px solid var(--line);border-radius:12px;padding:8px 10px}
+.spark canvas{width:100%;height:70px}
+.spark .k{display:flex;gap:12px;font-size:12px;color:var(--muted)}
+.spark .k i{display:inline-block;width:10px;height:3px;border-radius:2px;margin-right:5px;vertical-align:middle}
+.desk{display:flex;flex-direction:column;gap:12px}
+.grp{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:14px 14px 10px}
+.grp h2{font-family:var(--f-disp);font-size:18px;letter-spacing:.08em;margin:0 0 8px;display:flex;align-items:center;gap:8px}
+.grp h2 .dot{width:10px;height:10px;border-radius:50%}
+.ctl{display:grid;grid-template-columns:1fr auto;gap:2px 8px;margin-bottom:10px}
+.ctl label{font-weight:600;font-size:14px}
+.ctl output{font-family:var(--f-mono);font-size:13px;color:var(--cyan);font-variant-numeric:tabular-nums}
+.ctl input{grid-column:1/-1;width:100%;accent-color:var(--cyan)}
+.ctl small{grid-column:1/-1;color:var(--muted);font-size:12px}
+.row{display:flex;gap:8px;flex-wrap:wrap}
+.btn.p{background:var(--amber);color:#2a1d00;border-color:var(--amber)}
+.info{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+@media (max-width:900px){.info{grid-template-columns:minmax(0,1fr)}}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:16px;min-width:0}
+.card h3{font-family:var(--f-disp);font-size:20px;margin:0 0 6px;color:var(--amber)}
+.card p,.card li{color:#d6def5;max-width:65ch}
+.card ol,.card ul{padding-left:18px;margin:6px 0}
+code{font-family:var(--f-mono);font-size:13px;color:var(--cyan)}
+.src{font-size:12.5px;color:var(--muted)}
+.src a{color:var(--cyan)}
+@media (prefers-reduced-motion:reduce){*{scroll-behavior:auto}}
+body{margin:0}[hidden]{display:none!important}
+</style></head><body>
+
+<div class="wrap">
+  <header>
+    <div class="brand"><small>9. GRUP · COP31 GENÇLİK İKLİM İDEATHONU · ERZURUM</small><h1>BİYO-<b>MİDYE</b> saha simülatörü</h1></div>
+    <div class="views" role="group" aria-label="Görünüm">
+      <button id="v-genel" aria-pressed="true">Genel</button>
+      <button id="v-kesit" aria-pressed="false">Kesit</button>
+      <button id="v-yakin" aria-pressed="false">Granül yakın</button>
+      <button id="v-cikis" aria-pressed="false">Temiz çıkış</button>
+    </div>
+  </header>
+
+  <div class="main">
+    <div class="stage" id="stage">
+      <canvas id="c" aria-label="Kanal başındaki Biyo-Midye modülünün 3D görünümü"></canvas>
+      <div class="hud" id="hud">
+        <div class="m"><span>Akış hızı</span><b id="o-v">0<i>cm/s</i></b></div>
+        <div class="m x"><span>Günlük su</span><b id="o-q">0<i>m³/gün</i></b></div>
+        <div class="m x"><span>Temas süresi</span><b id="o-tc">0<i>s</i></b></div>
+        <div class="m"><span>Giriş NH₃-N</span><b id="o-cin">0<i>mg/L</i></b></div>
+        <div class="m hi"><span>Çıkış NH₃-N</span><b id="o-cout">0<i>mg/L</i></b></div>
+        <div class="m hi"><span>Tutulan amonyak</span><b id="o-eff">0<i>%</i></b></div>
+        <div class="m x"><span>Tutulan metal</span><b id="o-effm">0<i>%</i></b></div>
+        <div class="m"><span>Kaset doluluğu</span><b id="o-sat">0<i>%</i></b></div>
+        <div class="m x"><span>Torba değişimine</span><b id="o-left">–<i>gün</i></b></div>
+      </div>
+      <div class="status" id="status"></div>
+      <div class="lbl o" id="L-in">Köy / ahır çıkışı · kirli su</div>
+      <div class="lbl" id="L-mod">Biyo-Midye modülü (2 kaset)</div>
+      <div class="lbl g" id="L-out">Temiz su → kanal</div>
+      <div class="spark"><div class="k"><span><i style="background:var(--orange)"></i>Giriş NH₃-N</span><span><i style="background:var(--cyan)"></i>Çıkış NH₃-N</span><span id="o-clock">gün 0</span></div><canvas id="sp" width="680" height="140"></canvas></div>
+    </div>
+
+    <div class="desk">
+      <section class="grp" aria-labelledby="g1"><h2 id="g1"><span class="dot" style="background:var(--orange)"></span>GİRİŞ · KİRLİ SU</h2>
+        <div class="ctl"><label for="s-q">Akış (debi)</label><output id="t-q"></output><input id="s-q" type="range" min="0.005" max="1.5" step="0.005" value="0.02"><small>Ahır ve köy çıkışları genelde günde 1–5 m³ taşır. Hızlı su kasette daha az kalır.</small></div>
+        <div class="ctl"><label for="s-c">Amonyak yoğunluğu (NH₃-N)</label><output id="t-c"></output><input id="s-c" type="range" min="0.2" max="5" step="0.01" value="1.17"><small>Serçeme yıllık ortalaması 1,17 mg/L (Arslan 2021).</small></div>
+        <div class="ctl"><label for="s-m">Metal yükü (Ni, Cr)</label><output id="t-m"></output><input id="s-m" type="range" min="0" max="100" step="1" value="30"><small>Temsilî değer; vadide doğal nikel-krom var.</small></div>
+        <div class="ctl"><label for="s-t">Tortu (bulanıklık)</label><output id="t-t"></output><input id="s-t" type="range" min="0" max="300" step="5" value="40"><small>Tortu pomza ön katmanında birikir; çok tortu tıkanma yapar.</small></div>
+      </section>
+      <section class="grp" aria-labelledby="g2"><h2 id="g2"><span class="dot" style="background:var(--cyan)"></span>ÇIKIŞ · TEMİZ SU KANALA</h2>
+        <div class="ctl"><label for="s-w">Çıkış savağı açıklığı</label><output id="t-w"></output><input id="s-w" type="range" min="20" max="100" step="1" value="100"><small>Savak kısılınca kasetin önünde su yükselir, çıkış hızlanır.</small></div>
+        <div class="ctl"><label for="s-s">Çıkışta yayılım</label><output id="t-s"></output><input id="s-s" type="range" min="20" max="100" step="1" value="70"><small>Temiz suyun kanal kesitine ne kadar geniş dağıldığı.</small></div>
+      </section>
+      <section class="grp" aria-labelledby="g3"><h2 id="g3"><span class="dot" style="background:var(--amber)"></span>SİMÜLASYON</h2>
+        <div class="ctl"><label for="s-k">Zaman hızı</label><output id="t-k"></output><input id="s-k" type="range" min="0" max="4" step="1" value="2"><small>Torbaların dolmasını görmek için zamanı hızlandırın.</small></div>
+        <div class="row"><button class="btn" id="b-play">Durdur</button><button class="btn" id="b-reset">Sıfırla</button><button class="btn p" id="b-swap">Torbaları değiştir</button></div>
+        <div class="row" style="margin-top:8px"><button class="btn" id="b-flood">Senaryo: sağanak</button><button class="btn" id="b-spill">Senaryo: ahır taşması</button><button class="btn" id="b-normal">Senaryo: normal</button></div>
+      </section>
+    </div>
+  </div>
+
+  <div class="info">
+    <div class="card"><h3>Nasıl çalışır?</h3>
+      <ol><li>Kanalın başına çelik çerçeve çakılır; kenar sacları suyu kasetlere yönlendirir.</li>
+      <li>Su, delikli kapaktan ve pomza ön katmanından geçer; tortu burada kalır.</li>
+      <li>Torbalardaki zeolit amonyumu (NH₄⁺), biyokömür nikel ve kromu yüzeyinde tutar.</li>
+      <li>Temizlenen su kanala akar. Torbalar dolunca değiştirilir; dolgu analiz edilir.</li></ol></div>
+    <div class="card"><h3>Model nasıl hesaplıyor?</h3>
+      <p>Temas süresi <code>t = gözenek hacmi ÷ debi</code> (2 kaset, 18 L dolgu, %45 gözenek). Tutma oranı <code>1 − e^(−k·t)</code>, kaset doldukça azalır. Kapasite: 9,7 kg zeolit × 0,79 mg N/g ≈ 7,6 g azot. Kasetten geçebilen en fazla debi yaklaşık 1,2 L/s; fazlası üstten taşar ve arıtılmadan geçer.</p>
+      <p>Bir modül (2 kaset) küçük çıkışlar içindir: günde ~2 m³ suda torbalar birkaç günde, günde 0,1 m³’te aylar içinde dolar.</p>
+      <p class="src">Temsilî bir modeldir. Kesin değerleri Serçeme suyuyla sütun deneyinde ölçeceğiz.</p></div>
+    <div class="card"><h3>Kaynaklar</h3>
+      <ul class="src"><li>Arslan, H. Y. (2021). Serçeme Çayı doktora tezi, Atatürk Üniv., YÖK Tez No 676271.</li>
+      <li>Boulinguiez, B. (2005). Natural zeolite ammonium removal, KWR BTO 2005.052.</li>
+      <li>Bilgin, A. (1984). Serçeme Deresi ultramafitleri, Jeoloji Mühendisliği.</li>
+      <li>Moradi, M. vd. (2016). Pumice for ammonium removal, Arch. Environ. Prot. 42(2).</li></ul></div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script>
+(function(){
+const $ = id => document.getElementById(id);
+const stage = $('stage'), canvas = $('c');
+const renderer = new THREE.WebGLRenderer({canvas, antialias:true});
+renderer.setPixelRatio(Math.min(2, window.devicePixelRatio||1));
+renderer.outputEncoding = THREE.sRGBEncoding; renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.05;
+renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap; renderer.localClippingEnabled = true;
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x9cc3e4); scene.fog = new THREE.Fog(0xb8d3ea, 180, 900);
+const cam = new THREE.PerspectiveCamera(36, 1.6, 0.05, 3000);
+const controls = new THREE.OrbitControls(cam, canvas); controls.enableDamping = true; controls.maxPolarAngle = Math.PI*0.49; controls.minDistance = 1.5; controls.maxDistance = 160;
+scene.add(new THREE.HemisphereLight(0xdfeeff, 0x6b5a3d, 0.85));
+const sun = new THREE.DirectionalLight(0xfff1d8, 1.35); sun.position.set(-40,70,-30); sun.castShadow = true; sun.shadow.mapSize.set(2048,2048);
+Object.assign(sun.shadow.camera,{left:-30,right:30,top:30,bottom:-30,near:1,far:200}); scene.add(sun);
+let R = (s=>()=> (s=(s*16807)%2147483647)/2147483647)(7);
+function ctex(size, draw, rx=1, ry=1){ const c=document.createElement('canvas'); c.width=c.height=size; draw(c.getContext('2d'),size); const t=new THREE.CanvasTexture(c); t.wrapS=t.wrapT=THREE.RepeatWrapping; t.repeat.set(rx,ry); t.encoding=THREE.sRGBEncoding; t.anisotropy=4; return t; }
+// --- birimler: dm. Akış +x. Kanal tabanı y=0, taban genişliği 11 dm, şev 1:1, derinlik 6 dm
+const clipKesit = new THREE.Plane(new THREE.Vector3(0,0,-1), 2.7);
+const clipped = [];
+function M(o){ const m = new THREE.MeshStandardMaterial(o); clipped.push(m); return m; }
+const grass = M({map:ctex(256,(g,s)=>{g.fillStyle='#8f9a52';g.fillRect(0,0,s,s);for(let i=0;i<9000;i++){g.fillStyle=['#7d8a43','#a3a95e','#b5ad6a','#6f7c3c'][i%4];g.globalAlpha=.5;g.fillRect(R()*s,R()*s,1+R()*2,2+R()*4);}},120,80), roughness:1});
+const soil = M({map:ctex(256,(g,s)=>{g.fillStyle='#7a5f45';g.fillRect(0,0,s,s);for(let i=0;i<3500;i++){g.fillStyle=['#6a5039','#8b7055','#5c4532','#9a8064'][i%4];g.globalAlpha=.7;g.beginPath();g.arc(R()*s,R()*s,1+R()*3,0,7);g.fill();}},0.12,0.12), roughness:1});
+function prof(pts, mat, x0, x1){ const sh=new THREE.Shape(); pts.forEach((p,i)=> i?sh.lineTo(p[0],p[1]):sh.moveTo(p[0],p[1])); const g=new THREE.ExtrudeGeometry(sh,{depth:x1-x0,bevelEnabled:false}); g.rotateY(Math.PI/2); g.translate(x0,0,0); const m=new THREE.Mesh(g,mat); m.receiveShadow=true; return m; }
+scene.add(prof([[-11.5,6],[-5.5,0],[5.5,0],[11.5,6],[11.5,-6],[-11.5,-6]], soil, -24, 300));
+for(const sg of [-1,1]){ const b=new THREE.Mesh(new THREE.BoxGeometry(700,12,800),grass); b.position.set(130,0,sg*(11.5+400)); b.receiveShadow=true; scene.add(b); }
+const back = new THREE.Mesh(new THREE.BoxGeometry(300,12,24), grass); back.position.set(-174,0,0); scene.add(back);
+// kanal başı: beton başlık + boru
+const conc = M({color:0xb9b6ad, roughness:.9});
+const head = new THREE.Mesh(new THREE.BoxGeometry(2,9,24), conc); head.position.set(-25,3,0); head.castShadow=true; scene.add(head);
+const pipe = new THREE.Mesh(new THREE.CylinderGeometry(1.6,1.6,6,32,1,true), M({color:0x55606a, roughness:.6, side:THREE.DoubleSide})); pipe.rotation.z=Math.PI/2; pipe.position.set(-25.5,2.4,0); scene.add(pipe);
+// tepeler, köy
+const hillM = new THREE.MeshStandardMaterial({color:0x9d9466, flatShading:true, roughness:1});
+for(let i=0;i<10;i++){ const a=-1.2+i*0.38, r=500+R()*250; const h=new THREE.Mesh(new THREE.IcosahedronGeometry(1,2),hillM); h.scale.set(160+R()*140,50+R()*70,140+R()*90); h.position.set(Math.cos(a)*r-150,0,Math.sin(a)*r); scene.add(h); }
+const barnM = new THREE.MeshStandardMaterial({color:0xb9a68a}), roofM = new THREE.MeshStandardMaterial({color:0x8a3b2a});
+[[-60,40],[-75,-45],[-110,10]].forEach(([x,z],i)=>{ const g=new THREE.Group(); const b=new THREE.Mesh(new THREE.BoxGeometry(24,11,15),barnM); b.position.y=5.5; b.castShadow=true; g.add(b); const r=new THREE.Mesh(new THREE.CylinderGeometry(9,9,25,3),roofM); r.rotation.z=Math.PI/2; r.position.y=13; g.add(r); g.position.set(x,6,z); g.rotation.y=i*.5; scene.add(g); });
+// --- su: yukarı (kirli) ve aşağı (temiz)
+const wn = ctex(256,(g,s)=>{ const im=g.createImageData(s,s); const h=(x,y)=>Math.sin(x*.07+Math.sin(y*.05)*2)*.6+Math.sin(y*.11+x*.03)*.4+Math.sin((x+y)*.17)*.25;
+  for(let y=0;y<s;y++)for(let x=0;x<s;x++){const dx=h(x+1,y)-h(x-1,y),dy=h(x,y+1)-h(x,y-1);const n=new THREE.Vector3(-dx,-dy,1.4).normalize();const i=(y*s+x)*4;im.data[i]=(n.x*.5+.5)*255;im.data[i+1]=(n.y*.5+.5)*255;im.data[i+2]=(n.z*.5+.5)*255;im.data[i+3]=255;} g.putImageData(im,0,0);},0.06,0.14);
+wn.encoding = THREE.LinearEncoding; const wn2 = wn.clone(); wn2.needsUpdate=true;
+const wUpM = M({color:0x7c7339, transparent:true, opacity:.6, roughness:.25, normalMap:wn, depthWrite:false});
+const wDnM = M({color:0x3d9ab4, transparent:true, opacity:.6, depthWrite:false, roughness:.08, normalMap:wn2, emissive:0x0b5a6e, emissiveIntensity:.25});
+let wUp, wDn;
+function waterMesh(level, mat, x0, x1){ const pts=[[-5.5,0.02],[5.5,0.02],[5.5+level,level],[-5.5-level,level]]; return prof(pts, mat, x0, x1); }
+function rebuildWater(hUp, hDn){ if(wUp){scene.remove(wUp); wUp.geometry.dispose();} if(wDn){scene.remove(wDn); wDn.geometry.dispose();}
+  wUp = waterMesh(hUp, wUpM, -24, -0.45); wDn = waterMesh(hDn, wDnM, 0.45, 300); scene.add(wUp); scene.add(wDn); }
+// --- çerçeve ve kasetler
+const steel = M({color:0xc9d0d4, metalness:.45, roughness:.42});
+const frame = new THREE.Group(); scene.add(frame);
+const THK=0.9, CH=3.0, CL=5.0, ZC=2.68;
+for(const z of [-5.42,0,5.42]){ const p=new THREE.Mesh(new THREE.BoxGeometry(THK+0.3,7.2,0.24),steel); p.position.set(0,0.1,z); p.castShadow=true; frame.add(p); }
+const bar=new THREE.Mesh(new THREE.BoxGeometry(THK+0.5,0.22,11.4),steel); bar.position.y=3.62; bar.castShadow=true; frame.add(bar);
+const sill=new THREE.Mesh(new THREE.BoxGeometry(1.4,0.12,11),steel); sill.position.y=0.06; frame.add(sill);
+for(const sg of [-1,1]){ const sh=new THREE.Shape(); sh.moveTo(0,0); sh.lineTo(0,3.7); sh.lineTo(3.9,3.7); sh.lineTo(0.3,0); sh.closePath(); const g=new THREE.ExtrudeGeometry(sh,{depth:0.06,bevelEnabled:false}); g.rotateY(-Math.PI/2); if(sg<0) g.scale(1,1,-1); const w=new THREE.Mesh(g,steel); w.position.set(0.03,0,sg*5.5); frame.add(w); }
+// savak (çıkış kapağı) — kasetlerin hemen arkasında, kanal tabanından yükselen plaka
+const gateM = M({color:0xe2b33a, metalness:.3, roughness:.5}); const gate = new THREE.Mesh(new THREE.BoxGeometry(0.12,1,11), gateM); gate.position.set(1.6,0.5,0); gate.castShadow=true; scene.add(gate);
+const perf = ctex(512,(g,s)=>{ g.fillStyle='#000'; g.fillRect(0,0,s,s); g.fillStyle='#fff'; const n=16,m=10; for(let i=0;i<n;i++)for(let j=0;j<m;j++){ g.beginPath(); g.ellipse((i+.5)/n*s,(j+.5)/m*s,s/n*.3,s/m*.3,0,0,7); g.fill(); } },1,1); perf.encoding=THREE.LinearEncoding;
+const caseM = M({color:0x3f6a86, roughness:.45, alphaMap:perf, alphaTest:.5, side:THREE.DoubleSide});
+const rimM = M({color:0x8fb4c8, roughness:.4});
+const feltM = M({color:0xa29f92, roughness:1});
+function cassette(z){ const g=new THREE.Group();
+  const face1=new THREE.Mesh(new THREE.PlaneGeometry(CL,CH),caseM); face1.rotation.y=Math.PI/2; face1.position.set(-THK/2,CH/2,0); g.add(face1);
+  const face2=face1.clone(); face2.position.x=THK/2; g.add(face2);
+  for(const y of [0.03, CH-0.03]){ const r=new THREE.Mesh(new THREE.BoxGeometry(THK+0.06,0.06,CL),rimM); r.position.y=y; g.add(r); }
+  for(const zz of [-CL/2,CL/2]){ const r=new THREE.Mesh(new THREE.BoxGeometry(THK+0.06,CH,0.06),rimM); r.position.set(0,CH/2,zz); g.add(r); }
+  for(let i=0;i<5;i++)for(let j=0;j<5;j++){ const b=new THREE.Mesh(new THREE.BoxGeometry(THK*0.7,CH/5*0.88,CL/5*0.9),feltM); b.position.set(0.05,CH/5*(i+.5),-CL/2+CL/5*(j+.5)); g.add(b); }
+  g.position.set(0,0.12,z); g.traverse(o=>{if(o.isMesh)o.castShadow=true;}); scene.add(g); return g; }
+const cas=[cassette(-ZC), cassette(ZC)];
+// kesit yüzü (granül) — sadece kesit/yakın görünümde
+const gran = ctex(1024,(g,s)=>{ g.fillStyle='#3c3b36'; g.fillRect(0,0,s,s); const zc=['#b9bfae','#a7ae9a','#c9ccbd','#9aa38d','#d2d3c6'], bc=['#141312','#1d1b1a','#262423','#0d0c0c'];
+  for(let i=0;i<4200;i++){ const x=R()*s,y=R()*s,rad=s*(0.008+R()*0.012); const z=R()<.6; g.fillStyle=z?zc[i%5]:bc[i%4]; g.save(); g.translate(x,y); g.rotate(R()*6); g.beginPath(); const k=6; for(let j=0;j<k;j++){const a=j/k*6.283,rr=rad*(.65+R()*.5); g.lineTo(Math.cos(a)*rr,Math.sin(a)*rr);} g.closePath(); g.fill(); g.restore(); } },1,1);
+const capG = new THREE.Group(); capG.visible=false; scene.add(capG);
+for(let i=0;i<5;i++){ const p=new THREE.Mesh(new THREE.PlaneGeometry(THK*0.7, CH/5*0.88), new THREE.MeshStandardMaterial({map:gran, roughness:.9})); p.position.set(0.05,0.12+CH/5*(i+.5),2.7-0.005); capG.add(p); }
+const capSoil = new THREE.Mesh(new THREE.PlaneGeometry(60,6), new THREE.MeshStandardMaterial({map:soil.map, roughness:1})); capSoil.position.set(6,-3,2.69); capG.add(capSoil);
+// temiz su vurgusu (çıkış şeridi)
+const glowM = new THREE.MeshBasicMaterial({color:0x2be7ff, transparent:true, opacity:.28, depthWrite:false});
+const glow = new THREE.Mesh(new THREE.PlaneGeometry(1,1), glowM); glow.rotation.x=-Math.PI/2; scene.add(glow);
+// --- parçacıklar
+const MAXP=900; const sph=new THREE.SphereGeometry(1,10,8);
+const pMat = new THREE.MeshStandardMaterial({vertexColors:false, roughness:.4});
+const pts = new THREE.InstancedMesh(sph, new THREE.MeshBasicMaterial(), MAXP); pts.instanceMatrix.setUsage(THREE.DynamicDrawUsage); scene.add(pts);
+const colA=new THREE.Color(0xff7a1a), colM=new THREE.Color(0xb46cff), colW=new THREE.Color(0xe6fbff), colS=new THREE.Color(0x8a7a55);
+const P=[]; for(let i=0;i<MAXP;i++){ P.push({alive:false}); pts.setColorAt(i,colW); }
+const stuck=[]; const MAXSTUCK=500;
+const stuckMesh = new THREE.InstancedMesh(sph, new THREE.MeshBasicMaterial(), MAXSTUCK); scene.add(stuckMesh);
+for(let i=0;i<MAXSTUCK;i++) stuckMesh.setColorAt(i,colA);
+const o3=new THREE.Object3D();
+// --- durum
+const S = { q:.02, c:1.17, m:30, t:40, w:100, s:70, k:2, play:true, sat:0, satM:0, clog:0, day:0, capN:0, hist:[] };
+const SPEED=[0, 60, 3600, 6*3600, 86400]; const SPEEDL=['durdu','1 sn = 1 dk','1 sn = 1 saat','1 sn = 6 saat','1 sn = 1 gün'];
+const NCAP = 2*4830*0.79; // mg N
+const VPORE = 18*0.45; // L
+const QCAP0 = 1.2; // L/s
+const K=0.06, KM=0.08;
+function model(){
+  const qcap = QCAP0*(1-0.75*S.clog);
+  const open = S.w/100;
+  // savak kısılınca kasetin önündeki su seviyesi yükselir
+  const hUp = Math.min(4.6, 1.3 + 1.3*Math.sqrt(S.q)/open + 1.2*S.clog);
+  const levelOver = Math.max(0, hUp - (CH+0.12));
+  let qThr = Math.min(S.q, qcap);
+  const qOver = Math.max(0, S.q - qThr) + (levelOver>0 ? Math.min(qThr, levelOver*0.4) : 0);
+  qThr = Math.max(0, S.q - qOver);
+  const tc = qThr>0 ? VPORE/qThr : 0;
+  const E = (1-Math.exp(-K*tc))*(1-S.sat);
+  const EM = (1-Math.exp(-KM*tc))*(1-S.satM);
+  const cOut = (qThr*S.c*(1-E) + qOver*S.c)/S.q;
+  const effTot = 1 - cOut/S.c;
+  const mOut = (qThr*S.m*(1-EM) + qOver*S.m)/S.q;
+  const effM = S.m>0 ? 1 - mOut/S.m : 0;
+  const area = (11 + Math.min(hUp,4))*0.1 * Math.min(hUp,4)*0.1; // m2 (kabaca)
+  const v = (S.q/1000)/Math.max(0.02, area);
+  const hDn = 0.6 + 1.4*Math.sqrt(S.q);
+  const vOut = (S.q/1000)/Math.max(0.004, 1.1*open*Math.max(0.05, hDn*0.1)) ;
+  const rate = qThr*S.c*E; // mg/s
+  const leftDays = rate>1e-6 ? (1-S.sat)*NCAP/rate/86400 : Infinity;
+  return {qcap,hUp,qThr,qOver,tc,E,EM,cOut,effTot,effM,v,hDn,vOut,rate,leftDays,open};
+}
+// --- UI bağlama
+const fmt=(x,d=2)=>x.toLocaleString('tr-TR',{minimumFractionDigits:d,maximumFractionDigits:d});
+function bind(id, key, f){ const el=$('s-'+id), out=$('t-'+id); const upd=()=>{ S[key]=parseFloat(el.value); out.textContent=f(S[key]); }; el.addEventListener('input',upd); upd(); return upd; }
+const ups=[bind('q','q',x=>fmt(x,3)+' L/s · '+fmt(x*86.4,1)+' m³/gün'), bind('c','c',x=>fmt(x,2)+' mg/L'), bind('m','m',x=>fmt(x,0)+' µg/L'), bind('t','t',x=>fmt(x,0)+' NTU'), bind('w','w',x=>fmt(x,0)+' %'), bind('s','s',x=>fmt(x,0)+' %'), bind('k','k',x=>SPEEDL[x])];
+function setVals(o){ for(const [k,v] of Object.entries(o)){ $('s-'+k).value=v; } ups.forEach(u=>u()); }
+$('b-play').onclick=()=>{ S.play=!S.play; $('b-play').textContent=S.play?'Durdur':'Oynat'; };
+$('b-reset').onclick=()=>{ S.sat=0; S.satM=0; S.clog=0; S.day=0; S.hist=[]; stuck.length=0; };
+$('b-swap').onclick=()=>{ S.sat=0; S.satM=0; S.clog=0; stuck.length=0; };
+$('b-flood').onclick=()=>setVals({q:1.4,c:0.6,t:220,w:100});
+$('b-spill').onclick=()=>setVals({q:0.05,c:4.2,m:70,t:80});
+$('b-normal').onclick=()=>setVals({q:0.02,c:1.17,m:30,t:40,w:100,s:70});
+// --- görünümler
+const VIEWS = {
+  genel:{p:[-8,30,50], t:[-4,1.5,0], clip:false},
+  kesit:{p:[0,2.0,13], t:[0,1.6,2.7], clip:true},
+  yakin:{p:[0.05,1.55,3.9], t:[0.05,1.55,2.7], clip:true},
+  cikis:{p:[6,16,24], t:[13,1.2,0], clip:false}};
+let view='genel', camT=null;
+function setView(v){ view=v; for(const k of Object.keys(VIEWS)) $('v-'+k).setAttribute('aria-pressed', k===v?'true':'false');
+  const V=VIEWS[v]; camT={p:new THREE.Vector3(...V.p), t:new THREE.Vector3(...V.t)};
+  clipped.forEach(m=>{ m.clippingPlanes = V.clip ? [clipKesit] : []; m.needsUpdate=true; });
+  capG.visible = V.clip; }
+for(const k of Object.keys(VIEWS)) $('v-'+k).onclick=()=>setView(k);
+cam.position.set(...VIEWS.genel.p); controls.target.set(...VIEWS.genel.t);
+setView('genel');
+// --- boyut
+function resize(){ const r=stage.getBoundingClientRect(); renderer.setSize(r.width, r.height, false); cam.aspect=r.width/r.height; cam.updateProjectionMatrix(); }
+new ResizeObserver(resize).observe(stage); resize();
+// --- parçacık üretimi
+let spawnAcc=0;
+function spawn(md, dt){
+  // kirletici miktarı yoğunluk ve debiyle artar
+  const f = Math.min(3, Math.sqrt(S.q/0.02));
+  const rateA = (4 + 9*S.c)*f;
+  const rateM = S.m*0.18*f;
+  const rateS = S.t*0.05*f;
+  const rateW = 18*f;
+  for(const [r,type] of [[rateA,'a'],[rateM,'m'],[rateS,'s'],[rateW,'w']]){
+    let n = r*dt; while(n>0){ if(R()<n){ const i=P.findIndex(p=>!p.alive); if(i<0) return; const p=P[i];
+      p.alive=true; p.type=type; p.x=-23+R()*1.5; const lv=Math.max(0.4,md.hUp-0.2); p.y=0.2+R()*(lv-0.3); p.z=(R()*2-1)*4.8; p.state='up'; p.r= type==='w'?0.11:(type==='s'?0.15:0.22);
+      pts.setColorAt(i, type==='a'?colA:type==='m'?colM:type==='s'?colS:colW); } n-=1; } }
+  pts.instanceColor.needsUpdate=true;
+}
+let last=performance.now(), labT=0;
+const tmp=new THREE.Vector3();
+function proj(x,y,z){ tmp.set(x,y,z).project(cam); const r=stage.getBoundingClientRect(); return [(tmp.x+1)/2*r.width,(1-tmp.y)/2*r.height, tmp.z<1 && Math.abs(tmp.x)<1.1 && Math.abs(tmp.y)<1.1]; }
+function place(id,x,y,z){ const p=proj(x,y,z), el=$(id); el.style.left=p[0]+'px'; el.style.top=p[1]+'px'; el.style.opacity=p[2]?1:0; }
+let lastH=-1, lastHd=-1, histAcc=0;
+function frameLoop(now){
+  const dt=Math.min(0.1,(now-last)/1000); last=now;
+  const md=model();
+  // simülasyon zamanı
+  if(S.play){ const simDt = dt*SPEED[S.k];
+    S.sat = Math.min(1, S.sat + md.rate*simDt/NCAP);
+    S.satM = Math.min(1, S.satM + (md.qThr*S.m*md.EM*1e-3)*simDt/(2*1430*2.0));
+    S.clog = Math.min(0.95, S.clog + S.t*md.qThr*simDt*3e-8);
+    S.day += simDt/86400; histAcc += dt;
+    if(histAcc>0.25){ histAcc=0; S.hist.push([S.c, md.cOut]); if(S.hist.length>120) S.hist.shift(); } }
+  // su seviyeleri
+  const hU=Math.round(md.hUp*20)/20, hD=Math.round(md.hDn*20)/20;
+  if(hU!==lastH || hD!==lastHd){ rebuildWater(hU,hD); lastH=hU; lastHd=hD; }
+  gate.scale.y = Math.max(0.05,(1-md.open)*4.2+0.05); gate.position.y = gate.scale.y/2;
+  const flowAnim = (S.play?1:0)*(1.0+4.5*Math.sqrt(S.q))*dt;
+  wn.offset.x -= flowAnim*0.02; wn2.offset.x -= (1.0+4.5*Math.sqrt(S.q))*(1.6-0.6*md.open)*dt*0.02*(S.play?1:0);
+  // yayılım vurgusu
+  const spread = 3 + 8*S.s/100; glow.scale.set(60, spread*2, 1); glow.position.set(31, hD+0.03, 0);
+  glowM.opacity = 0.12 + 0.3*md.effTot;
+  wDnM.color.setRGB(0.24+0.25*(1-md.effTot)*0.6, 0.6-0.15*(1-md.effTot), 0.7-0.3*(1-md.effTot));
+  // parçacıklar
+  if(S.play) spawn(md, dt);
+  const vis = 1.0 + 4.5*Math.sqrt(S.q); // görsel hız (debiyle artar)
+  for(let i=0;i<MAXP;i++){ const p=P[i]; if(!p.alive){ o3.position.set(0,-99,0); o3.scale.setScalar(0); o3.updateMatrix(); pts.setMatrixAt(i,o3.matrix); continue; }
+    if(S.play){
+      let sp = vis*dt*(p.state==='in'?0.25:1);
+      if(p.state==='up' && p.x>=-0.5){
+        const overflow = R() < md.qOver/S.q;
+        if(overflow){ p.state='over'; p.y = Math.max(p.y, CH+0.25); }
+        else { p.state='in';
+          const cap = p.type==='a' ? md.E : p.type==='m' ? md.EM : p.type==='s' ? 0.97 : 0;
+          if(R()<cap){ p.alive=false; if(p.type!=='w'){ stuck.push({x:-0.35+R()*0.75, y:0.25+R()*(CH-0.3), z:(R()<.5?-1:1)*(0.2+R()*4.8), t:p.type}); if(stuck.length>MAXSTUCK) stuck.shift(); } continue; } } }
+      if(p.state==='in' && p.x>0.5) p.state='dn';
+      if(p.state==='over' && p.x>1.5){ p.state='dn'; p.y = Math.min(p.y, md.hDn-0.1); }
+      if(p.state==='dn'){ sp = (1.0 + 4.5*Math.sqrt(S.q))*(1.6 - 0.6*md.open)*dt; const sw=(spread/11)*5.3; p.z += ((p.z>0?1:-1)*sw - p.z)*0.002; }
+      p.x += sp;
+      if(p.state==='up') p.y = Math.min(p.y, md.hUp-0.15);
+      if(p.x>60) p.alive=false; }
+    o3.position.set(p.x,p.y,p.z); o3.scale.setScalar(p.r * (view==='yakin'?0.25:view==='kesit'?0.5:1)); o3.updateMatrix(); pts.setMatrixAt(i,o3.matrix); }
+  pts.instanceMatrix.needsUpdate=true;
+  // tutulan iyonlar: kaset yüzünde / kesitte
+  const nS = Math.min(stuck.length, Math.round(MAXSTUCK*Math.max(S.sat,0.04)) );
+  for(let i=0;i<MAXSTUCK;i++){ const s=stuck[stuck.length-1-i];
+    if(i<nS && s){ const zz = view==='genel'||view==='cikis' ? s.z : 2.66 + (s.z%0.02); o3.position.set(view==='genel'||view==='cikis' ? -0.48 : s.x, s.y+0.12, view==='genel'||view==='cikis' ? s.z : 2.66); o3.scale.setScalar(view==='yakin'?0.04:0.12); stuckMesh.setColorAt(i, s.t==='a'?colA:s.t==='m'?colM:colS); }
+    else { o3.position.set(0,-99,0); o3.scale.setScalar(0); }
+    o3.updateMatrix(); stuckMesh.setMatrixAt(i,o3.matrix); }
+  stuckMesh.instanceMatrix.needsUpdate=true; if(stuckMesh.instanceColor) stuckMesh.instanceColor.needsUpdate=true;
+  // kamera geçişi
+  if(camT){ cam.position.lerp(camT.p, 0.08); controls.target.lerp(camT.t, 0.08); if(cam.position.distanceTo(camT.p)<0.05) camT=null; }
+  controls.update(); renderer.render(scene, cam);
+  // HUD
+  $('o-v').innerHTML=fmt(md.v*100,2)+'<i>cm/s</i>'; $('o-q').innerHTML=fmt(S.q*86.4,1)+'<i>m³/gün</i>'; $('o-tc').innerHTML=fmt(md.tc,0)+'<i>s</i>';
+  $('o-cin').innerHTML=fmt(S.c,2)+'<i>mg/L</i>'; $('o-cout').innerHTML=fmt(md.cOut,2)+'<i>mg/L</i>'; $('o-eff').innerHTML=fmt(100*md.effTot,0)+'<i>%</i>';
+  $('o-effm').innerHTML=fmt(100*md.effM,0)+'<i>%</i>'; $('o-sat').innerHTML=fmt(100*S.sat,0)+'<i>%</i>';
+  $('o-left').innerHTML=(isFinite(md.leftDays)? fmt(md.leftDays, md.leftDays<10?1:0):'–')+'<i>gün</i>';
+  $('o-clock').textContent='gün '+fmt(S.day, S.day<10?1:0);
+  // durum çipleri
+  const st=[]; if(md.qOver>0.001) st.push(['bad','Taşma: suyun %'+fmt(100*md.qOver/S.q,0)+'’i arıtılmadan geçiyor']);
+  if(S.sat>0.8) st.push(['warn','Torbalar %'+fmt(100*S.sat,0)+' dolu: değiştirin']);
+  if(S.clog>0.5) st.push(['warn','Pomza ön katmanı tıkanıyor (%'+fmt(100*S.clog,0)+')']);
+  if(md.effTot>0.6 && !st.length) st.push(['','Normal çalışma · elektrik 0 kWh']);
+  if(!st.length) st.push(['warn','Temas süresi kısa: tutma düşük']);
+  $('status').innerHTML = st.map(([c,t])=>'<span class="chip '+c+'">'+t+'</span>').join('');
+  // etiketler
+  place('L-in', -20, 6.5, 0); place('L-mod', 0, 4.3, 0); place('L-out', 14, md.hDn+1.2, 0);
+  // eğri
+  drawSpark();
+  requestAnimationFrame(frameLoop);
+}
+const sp=$('sp'), sc=sp.getContext('2d');
+function drawSpark(){ const w=sp.width,h=sp.height; sc.clearRect(0,0,w,h); const H=S.hist; if(H.length<2) return;
+  const mx=Math.max(1.5, ...H.map(a=>a[0]))*1.1; sc.strokeStyle='rgba(159,176,217,.25)'; sc.lineWidth=1; for(let g=1;g<4;g++){ sc.beginPath(); sc.moveTo(0,h*g/4); sc.lineTo(w,h*g/4); sc.stroke(); }
+  [[0,'#ff7a1a'],[1,'#11ddee']].forEach(([k,c])=>{ sc.strokeStyle=c; sc.lineWidth=3; sc.beginPath(); H.forEach((a,i)=>{ const x=i/(120-1)*w, y=h-(a[k]/mx)*h; i?sc.lineTo(x,y):sc.moveTo(x,y); }); sc.stroke();
+    const a=H[H.length-1]; sc.fillStyle=c; sc.beginPath(); sc.arc((H.length-1)/(119)*w, h-(a[k]/mx)*h, 5, 0, 7); sc.fill(); });
+  sc.fillStyle='rgba(159,176,217,.9)'; sc.font='20px JetBrains Mono, monospace'; sc.fillText('1,0 mg/L sınır', 8, h-(1/mx)*h-6); sc.strokeStyle='rgba(252,182,6,.7)'; sc.setLineDash([8,6]); sc.beginPath(); sc.moveTo(0,h-(1/mx)*h); sc.lineTo(w,h-(1/mx)*h); sc.stroke(); sc.setLineDash([]); }
+
+requestAnimationFrame(frameLoop);
+})();
+</script>
+
+</body></html>
