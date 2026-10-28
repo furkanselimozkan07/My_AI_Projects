@@ -103,9 +103,9 @@ body{margin:0}[hidden]{display:none!important}
 
     <div class="desk">
       <section class="grp" aria-labelledby="g1"><h2 id="g1"><span class="dot" style="background:var(--orange)"></span>GİRİŞ · KİRLİ SU</h2>
-        <div class="ctl"><label for="s-q">Akış (debi)</label><output id="t-q"></output><input id="s-q" type="range" min="0.005" max="1.5" step="0.005" value="0.02"><small>Ahır ve köy çıkışları genelde günde 1–5 m³ taşır. Hızlı su kasette daha az kalır.</small></div>
-        <div class="ctl"><label for="s-c">Amonyak yoğunluğu (NH₃-N)</label><output id="t-c"></output><input id="s-c" type="range" min="0.2" max="5" step="0.01" value="1.17"><small>Serçeme yıllık ortalaması 1,17 mg/L (Arslan 2021).</small></div>
-        <div class="ctl"><label for="s-m">Metal yükü (Ni, Cr)</label><output id="t-m"></output><input id="s-m" type="range" min="0" max="100" step="1" value="30"><small>Temsilî değer; vadide doğal nikel-krom var.</small></div>
+        <div class="ctl"><label for="s-q">Akış (debi)</label><output id="t-q"></output><input id="s-q" type="range" min="0.001" max="1.5" step="0.001" value="0.005"><small>Kasetten süzülebilen debi ≈0,1 L/s (ölçülecek); fazlası savaktan taşar. Hızlı akışta torbalar daha çabuk dolar.</small></div>
+        <div class="ctl"><label for="s-c">Amonyak yoğunluğu (NH₃-N)</label><output id="t-c"></output><input id="s-c" type="range" min="0.2" max="30" step="0.01" value="1.17"><small>Serçeme yıllık ortalaması 1,17 mg/L (Arslan 2021); süt çiftliği yüzey akışı ≈28 mg/L (Rahman vd. 2024).</small></div>
+        <div class="ctl"><label for="s-m">Metal yükü (Ni, Cr)</label><output id="t-m"></output><input id="s-m" type="range" min="0" max="200" step="1" value="60"><small>Karasu (Dumlu–Aşkale) nikel ort. 40–140 µg/L (Sönmez vd. 2012); vadide doğal nikel-krom var.</small></div>
         <div class="ctl"><label for="s-t">Tortu (bulanıklık)</label><output id="t-t"></output><input id="s-t" type="range" min="0" max="300" step="5" value="40"><small>Tortu pomza ön katmanında birikir; çok tortu tıkanma yapar.</small></div>
       </section>
       <section class="grp" aria-labelledby="g2"><h2 id="g2"><span class="dot" style="background:var(--cyan)"></span>ÇIKIŞ · TEMİZ SU KANALA</h2>
@@ -127,12 +127,20 @@ body{margin:0}[hidden]{display:none!important}
       <li>Torbalardaki zeolit amonyumu (NH₄⁺), biyokömür nikel ve kromu yüzeyinde tutar.</li>
       <li>Temizlenen su kanala akar. Torbalar dolunca değiştirilir; dolgu analiz edilir.</li></ol></div>
     <div class="card"><h3>Model nasıl hesaplıyor?</h3>
-      <p>Temas süresi <code>t = gözenek hacmi ÷ debi</code> (2 kaset, 18 L dolgu, %45 gözenek). Tutma oranı <code>1 − e^(−k·t)</code>, kaset doldukça azalır. Kapasite: 9,7 kg zeolit × 0,79 mg N/g ≈ 7,6 g azot. Kasetten geçebilen en fazla debi yaklaşık 1,2 L/s; fazlası üstten taşar ve arıtılmadan geçer.</p>
-      <p>Bir modül (2 kaset) küçük çıkışlar içindir: günde ~2 m³ suda torbalar birkaç günde, günde 0,1 m³’te aylar içinde dolar.</p>
-      <p class="src">Temsilî bir modeldir. Kesin değerleri Serçeme suyuyla sütun deneyinde ölçeceğiz.</p></div>
+      <p><b>Kapasite</b> girişteki amonyağa bağlı: <code>q = 0,375 × 1,961 × C^0,434</code> mg N/g (üst sınır 16,2). 0,375 çarpanı, gerçek sudaki Ca, Mg, K rekabetini temsil eder. Şu an: <b id="o-capq">–</b> mg N/g → ünite <b id="o-capg">–</b> g azot tutar, yani <b id="o-capv">–</b> m³ su temizler.</p>
+      <p><b>Tutma</b> <code>1 − e^(−k·EBCT)</code>, EBCT = 18 L dolgu ÷ debi, k = 0,018 1/s. %90 tutma için debi ≤ 0,14 L/s. <b>Süzülebilir debi</b> ≈0,1 L/s; fazlası savaktan taşar.</p>
+      <p>Torbaların 30 günde bir değişmesi için akış en fazla <b id="o-q30">–</b> L/gün olmalı. Yani bir ünite küçük, sürekli çıkışlar için; büyük akışlarda birden fazla ünite ve rejenerasyon gerekir.</p>
+      <p class="src">Literatüre dayalı ön modeldir; k, süzülme katsayısı ve gerçek sudaki kapasite laboratuvar kolon deneyinde ölçülecek.</p></div>
     <div class="card"><h3>Kaynaklar</h3>
       <ul class="src"><li>Arslan, H. Y. (2021). Serçeme Çayı doktora tezi, Atatürk Üniv., YÖK Tez No 676271.</li>
+      <li>Tosun, İ. (2012). Ammonium removal by clinoptilolite (Balıkesir), IJERPH 9(3):970–984.</li>
       <li>Boulinguiez, B. (2005). Natural zeolite ammonium removal, KWR BTO 2005.052.</li>
+      <li>Demir, A., Günay, A., Debik, E. (2002). Bigadiç klinoptilolit kolon deneyi, Water SA 28(3):329–336.</li>
+      <li>Turan, M., Çelik, M. S. (2003). Regenerability of Turkish clinoptilolite, J. Water Supply Res. Technol.–AQUA 52(1):59–66.</li>
+      <li>Rocha, L. C. C., Zuquette, L. V. (2020). Zeolit ortam hidrolik iletkenliği, Geociências (UNESP).</li>
+      <li>Sönmez, A. Y., Hisar, O., Yanık, T. (2012). Karasu ağır metal, Atatürk Üniv. Ziraat Fak. Derg. 43(1):69–77.</li>
+      <li>Sokić, M. vd. (2025). Ni ve Cr tutma, Processes 13(3):818.</li>
+      <li>Rahman, M. Y. A. vd. (2024). Süt çiftliği yüzey akışı, Water 16(10):1347.</li>
       <li>Bilgin, A. (1984). Serçeme Deresi ultramafitleri, Jeoloji Mühendisliği.</li>
       <li>Moradi, M. vd. (2016). Pumice for ammonium removal, Arch. Environ. Prot. 42(2).</li></ul></div>
   </div>
@@ -228,12 +236,17 @@ const stuckMesh = new THREE.InstancedMesh(sph, new THREE.MeshBasicMaterial(), MA
 for(let i=0;i<MAXSTUCK;i++) stuckMesh.setColorAt(i,colA);
 const o3=new THREE.Object3D();
 // --- durum
-const S = { q:.02, c:1.17, m:30, t:40, w:100, s:70, k:2, play:true, sat:0, satM:0, clog:0, day:0, capN:0, hist:[] };
+const S = { q:.005, c:1.17, m:60, t:40, w:100, s:70, k:2, play:true, sat:0, satM:0, clog:0, day:0, capN:0, hist:[] };
 const SPEED=[0, 60, 3600, 6*3600, 86400]; const SPEEDL=['durdu','1 sn = 1 dk','1 sn = 1 saat','1 sn = 6 saat','1 sn = 1 gün'];
-const NCAP = 2*4830*0.79; // mg N
-const VPORE = 18*0.45; // L
-const QCAP0 = 1.2; // L/s
-const K=0.06, KM=0.08;
+// Kaynaklı parametreler (bkz. Kaynaklar kartı)
+const MZ = 2*4800;            // g zeolit / ünite (2 kaset)
+const FC = 0.375;             // gerçek suda kapasite oranı (rakip iyonlar, KWR BTO 2005.052: %60-65 düşüş)
+const qop = c => FC*Math.min(1.961*Math.pow(Math.max(c,0.01),0.434), 16.16); // mg N/g, Freundlich/Langmuir (Tosun 2012)
+const NCAPf = () => MZ*qop(S.c); // mg N
+const VBED = 18;              // L dolgu (2 kaset)
+const QCAP0 = 0.10;           // L/s süzülebilir debi (K = 3e-4 m/s, A = 0,3 m², Δh = 10 cm; ölçülecek: 0,003–3 L/s)
+const K=0.018, KM=0.012;      // 1/s, boş yatak temas süresi bazlı (Demir vd. 2002; Turan & Çelik 2003); metal: varsayım
+const MCAP = MZ*2.2*0.5;      // mg Ni-eşdeğeri: klinoptilolit 1,9–2,6 mg/g (Sokić vd. 2025), rekabet için ×0,5 (varsayım)
 function model(){
   const qcap = QCAP0*(1-0.75*S.clog);
   const open = S.w/100;
@@ -243,7 +256,7 @@ function model(){
   let qThr = Math.min(S.q, qcap);
   const qOver = Math.max(0, S.q - qThr) + (levelOver>0 ? Math.min(qThr, levelOver*0.4) : 0);
   qThr = Math.max(0, S.q - qOver);
-  const tc = qThr>0 ? VPORE/qThr : 0;
+  const tc = qThr>0 ? VBED/qThr : 0;
   const E = (1-Math.exp(-K*tc))*(1-S.sat);
   const EM = (1-Math.exp(-KM*tc))*(1-S.satM);
   const cOut = (qThr*S.c*(1-E) + qOver*S.c)/S.q;
@@ -255,7 +268,7 @@ function model(){
   const hDn = 0.6 + 1.4*Math.sqrt(S.q);
   const vOut = (S.q/1000)/Math.max(0.004, 1.1*open*Math.max(0.05, hDn*0.1)) ;
   const rate = qThr*S.c*E; // mg/s
-  const leftDays = rate>1e-6 ? (1-S.sat)*NCAP/rate/86400 : Infinity;
+  const leftDays = rate>1e-6 ? (1-S.sat)*NCAPf()/rate/86400 : Infinity;
   return {qcap,hUp,qThr,qOver,tc,E,EM,cOut,effTot,effM,v,hDn,vOut,rate,leftDays,open};
 }
 // --- UI bağlama
@@ -267,8 +280,8 @@ $('b-play').onclick=()=>{ S.play=!S.play; $('b-play').textContent=S.play?'Durdur
 $('b-reset').onclick=()=>{ S.sat=0; S.satM=0; S.clog=0; S.day=0; S.hist=[]; stuck.length=0; };
 $('b-swap').onclick=()=>{ S.sat=0; S.satM=0; S.clog=0; stuck.length=0; };
 $('b-flood').onclick=()=>setVals({q:1.4,c:0.6,t:220,w:100});
-$('b-spill').onclick=()=>setVals({q:0.05,c:4.2,m:70,t:80});
-$('b-normal').onclick=()=>setVals({q:0.02,c:1.17,m:30,t:40,w:100,s:70});
+$('b-spill').onclick=()=>setVals({q:0.05,c:28.3,m:70,t:80});
+$('b-normal').onclick=()=>setVals({q:0.005,c:1.17,m:60,t:40,w:100,s:70});
 // --- görünümler
 const VIEWS = {
   genel:{p:[-8,30,50], t:[-4,1.5,0], clip:false},
@@ -291,7 +304,7 @@ let spawnAcc=0;
 function spawn(md, dt){
   // kirletici miktarı yoğunluk ve debiyle artar
   const f = Math.min(3, Math.sqrt(S.q/0.02));
-  const rateA = (4 + 9*S.c)*f;
+  const rateA = (4 + 9*Math.min(S.c,5) + 0.4*Math.max(0,S.c-5))*f;
   const rateM = S.m*0.18*f;
   const rateS = S.t*0.05*f;
   const rateW = 18*f;
@@ -311,8 +324,8 @@ function frameLoop(now){
   const md=model();
   // simülasyon zamanı
   if(S.play){ const simDt = dt*SPEED[S.k];
-    S.sat = Math.min(1, S.sat + md.rate*simDt/NCAP);
-    S.satM = Math.min(1, S.satM + (md.qThr*S.m*md.EM*1e-3)*simDt/(2*1430*2.0));
+    S.sat = Math.min(1, S.sat + md.rate*simDt/NCAPf());
+    S.satM = Math.min(1, S.satM + (md.qThr*S.m*md.EM*1e-3)*simDt/MCAP);
     S.clog = Math.min(0.95, S.clog + S.t*md.qThr*simDt*3e-8);
     S.day += simDt/86400; histAcc += dt;
     if(histAcc>0.25){ histAcc=0; S.hist.push([S.c, md.cOut]); if(S.hist.length>120) S.hist.shift(); } }
@@ -362,10 +375,12 @@ function frameLoop(now){
   $('o-effm').innerHTML=fmt(100*md.effM,0)+'<i>%</i>'; $('o-sat').innerHTML=fmt(100*S.sat,0)+'<i>%</i>';
   $('o-left').innerHTML=(isFinite(md.leftDays)? fmt(md.leftDays, md.leftDays<10?1:0):'–')+'<i>gün</i>';
   $('o-clock').textContent='gün '+fmt(S.day, S.day<10?1:0);
+  { const qq=qop(S.c), cg=MZ*qq/1000; $('o-capq').textContent=fmt(qq,2); $('o-capg').textContent=fmt(cg,1); $('o-capv').textContent=fmt(cg/S.c,1); $('o-q30').textContent=fmt(cg*1000/S.c/30,0); }
   // durum çipleri
   const st=[]; if(md.qOver>0.001) st.push(['bad','Taşma: suyun %'+fmt(100*md.qOver/S.q,0)+'’i arıtılmadan geçiyor']);
   if(S.sat>0.8) st.push(['warn','Torbalar %'+fmt(100*S.sat,0)+' dolu: değiştirin']);
   if(S.clog>0.5) st.push(['warn','Pomza ön katmanı tıkanıyor (%'+fmt(100*S.clog,0)+')']);
+  if(isFinite(md.leftDays) && md.leftDays<3 && S.sat<=0.8) st.push(['warn','Bu akışta torbalar ~'+fmt(md.leftDays,1)+' günde dolar']);
   if(md.effTot>0.6 && !st.length) st.push(['','Normal çalışma · elektrik 0 kWh']);
   if(!st.length) st.push(['warn','Temas süresi kısa: tutma düşük']);
   $('status').innerHTML = st.map(([c,t])=>'<span class="chip '+c+'">'+t+'</span>').join('');
