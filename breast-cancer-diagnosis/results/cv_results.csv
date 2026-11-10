@@ -1,0 +1,6 @@
+model,accuracy,recall,precision,roc_auc
+Logistic Regression,0.9737,0.9436,0.9863,0.9953
+SVM (RBF),0.9772,0.9576,0.981,0.9945
+Gradient Boosting,0.9508,0.9107,0.9569,0.9927
+Random Forest,0.9543,0.9341,0.9463,0.9896
+k-NN,0.9649,0.92,0.9856,0.9863

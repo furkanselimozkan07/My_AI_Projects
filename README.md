@@ -21,4 +21,8 @@ Team project from a Hack Day event, built as a live Kaggle competition: predict 
 
 **Stack:** Python, pandas, scikit-learn, Seaborn, Matplotlib
 
+### [Breast cancer diagnosis](breast-cancer-diagnosis/)
+
+Compares five classifiers on the Wisconsin diagnostic dataset (bundled with scikit-learn), tunes the decision threshold for 98 % malignant recall and explains the model with permutation importance. Best: Logistic Regression, ROC AUC 0.995. Includes tests and plots.
+
 More projects: see [nvidia-deep-learning](https://github.com/furkanselimozkan07/nvidia-deep-learning) and [ai-bootcamp](https://github.com/furkanselimozkan07/ai-bootcamp).
