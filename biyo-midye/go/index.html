@@ -1,0 +1,348 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>BİYO-MİDYE · Proje kartı / Project card</title>
+<meta name="description" content="Biyo-Midye: kirliliği kaynağında tutan elektriksiz filtre kaseti. An electricity-free filter cassette that stops pollution at the source.">
+<meta property="og:title" content="BİYO-MİDYE">
+<meta property="og:description" content="Kirliliği kaynağında tutan elektriksiz filtre kaseti · An electricity-free filter cassette that stops pollution at the source">
+<meta property="og:image" content="https://furkanselimozkan07.github.io/My_AI_Projects/biyo-midye/go/media/og.jpg">
+<meta name="theme-color" content="#0D2633">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 96 96'%3E%3Cpath d='M48 8C76 8 90 34 86 58C82 80 64 90 48 90C32 90 14 80 10 58C6 34 20 8 48 8Z' fill='%230D2633'/%3E%3Cpath d='M48 8C76 8 90 34 86 58C82 80 64 90 48 90Z' fill='%230E7C86'/%3E%3Cpath d='M48 38C54 48 58 54 58 60A10 10 0 0 1 38 60C38 54 42 48 48 38Z' fill='%23F2B035'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@600;700&display=swap">
+<style>
+:root{
+  --ink:#0D2633; --ink2:#14384A; --teal:#0E7C86; --teal-l:#2BB3C0; --amber:#F2B035; --paper:#EEF4F2; --card:#FFFFFF; --line:#D5E1DE;
+  --text:#1B2B33; --muted:#4E5F67; --mud:#8A7B3A; --green:#3E9160;
+  --f-head:"Fraunces",Georgia,serif; --f-disp:"Space Grotesk",Arial,sans-serif; --f-body:"Inter",Arial,sans-serif;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--paper);color:var(--text);font-family:var(--f-body);font-size:16px;line-height:1.55}
+img,video{max-width:100%;display:block}
+a{color:var(--teal)}
+:focus-visible{outline:3px solid var(--amber);outline-offset:2px}
+[hidden]{display:none!important}
+.wrap{max-width:980px;margin:0 auto;padding:0 max(16px,env(safe-area-inset-left,0px))}
+
+/* dil seçimi / language gate */
+.gate{position:fixed;inset:0;z-index:50;background:var(--ink);color:#fff;display:flex;align-items:center;justify-content:center;padding:24px;overflow:auto}
+.gate-in{width:100%;max-width:420px;text-align:center}
+.gate .mark{width:84px;height:84px;margin:0 auto}
+.gate h1{font-family:var(--f-disp);font-weight:700;font-size:44px;letter-spacing:-1px;margin:16px 0 4px;line-height:1}
+.gate h1 b{color:var(--teal-l)}
+.gate p{margin:0 0 28px;color:#B9CDD3;font-size:15px}
+.gate .q{font-family:var(--f-head);font-size:22px;margin:0 0 16px;color:#fff}
+.gate .choices{display:grid;gap:12px}
+.lang-btn{display:flex;align-items:center;gap:14px;width:100%;min-height:64px;padding:12px 18px;border-radius:16px;border:2px solid rgba(255,255,255,.18);background:var(--ink2);color:#fff;font:600 19px var(--f-body);cursor:pointer;text-align:left}
+.lang-btn:hover{border-color:var(--teal-l)}
+.lang-btn .code{flex-shrink:0;width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font:700 15px var(--f-disp);background:var(--amber);color:var(--ink)}
+.lang-btn.en .code{background:var(--teal-l)}
+.lang-btn small{display:block;font-size:13px;font-weight:500;color:#B9CDD3}
+
+/* üst bar */
+.top{position:sticky;top:0;z-index:10;background:rgba(13,38,51,.96);backdrop-filter:blur(8px);color:#fff}
+.top .wrap{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:56px}
+.brand{display:flex;align-items:center;gap:10px;font:700 19px var(--f-disp);color:#fff;text-decoration:none}
+.brand svg{width:30px;height:30px}
+.brand b{color:var(--teal-l)}
+.switch{font:600 14px var(--f-body);color:#fff;background:transparent;border:1.5px solid rgba(255,255,255,.4);border-radius:999px;padding:8px 14px;min-height:40px;cursor:pointer}
+.switch:hover{border-color:var(--teal-l)}
+
+/* hero */
+.hero{background:var(--ink);color:#fff;padding:28px 0 36px}
+.hero .kicker{font:700 12px var(--f-disp);letter-spacing:.2em;color:var(--amber);text-transform:uppercase}
+.hero h2{font-family:var(--f-head);font-weight:700;font-size:clamp(28px,6vw,44px);line-height:1.12;margin:10px 0 12px;text-wrap:balance}
+.hero p.lead{margin:0 0 20px;color:#CFE0E4;font-size:17px;max-width:60ch}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 22px;padding:0;list-style:none}
+.chips li{font-size:13px;font-weight:600;border:1.5px solid rgba(255,255,255,.45);border-radius:999px;padding:5px 12px}
+.video{border-radius:18px;overflow:hidden;background:#000;aspect-ratio:16/9;box-shadow:0 10px 30px rgba(0,0,0,.35)}
+.video video{width:100%;height:100%;object-fit:cover}
+.vcap{margin-top:8px;font-size:13px;color:#9FBAC2}
+
+section{padding:40px 0}
+.sec-title{font-family:var(--f-head);font-weight:700;font-size:clamp(24px,4.5vw,32px);line-height:1.15;color:var(--ink);margin:0 0 6px}
+.sec-sub{margin:0 0 22px;color:var(--muted)}
+
+/* nasıl çalışır */
+.steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin:0;padding:0;list-style:none}
+@media (max-width:760px){.steps{grid-template-columns:minmax(0,1fr)}}
+.step{background:var(--card);border:1px solid var(--line);border-radius:18px;overflow:hidden}
+.step .ph{aspect-ratio:16/10;background:#E4EEEE;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.step .ph img{width:100%;height:100%;object-fit:cover}
+.step .ph.contain img{object-fit:contain;padding:10px}
+.step .tx{padding:16px 18px 20px}
+.step h3{display:flex;align-items:center;gap:10px;margin:0 0 6px;font-size:19px}
+.num{flex-shrink:0;width:32px;height:32px;border-radius:50%;background:var(--teal);color:#fff;display:inline-flex;align-items:center;justify-content:center;font:700 15px var(--f-disp)}
+.step p{margin:0;color:var(--muted);font-size:15px}
+
+.layers{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:22px}
+.layer{text-align:center;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px 8px}
+.layer .c{width:84px;height:84px;margin:0 auto 8px;border-radius:50%;border:4px solid;display:flex;align-items:center;justify-content:center;background:#fff;overflow:hidden}
+.layer .c img{width:70px}
+.layer b{display:block;font-family:var(--f-head);font-size:17px;color:var(--ink)}
+.layer span{font-size:13px;color:var(--muted)}
+
+/* keşfet */
+.explore{background:#E2ECEA}
+.tiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+@media (max-width:640px){.tiles{grid-template-columns:minmax(0,1fr)}}
+.tile{display:flex;flex-direction:column;background:var(--card);border:1px solid var(--line);border-radius:18px;overflow:hidden;color:inherit;text-decoration:none}
+.tile .ph{background:var(--ink);aspect-ratio:16/9;overflow:hidden;display:flex;align-items:center;justify-content:center}
+.tile .ph img{width:100%;height:100%;object-fit:cover}
+.tile .ph.poster{background:#D9E5E2}.tile .ph.poster img{object-fit:cover;object-position:top}
+.tile .tx{padding:16px 18px 18px;display:flex;flex-direction:column;gap:10px;flex:1}
+.tile h3{margin:0;font-size:19px}
+.tile p{margin:0;color:var(--muted);font-size:15px}
+.btns{display:flex;flex-wrap:wrap;gap:8px;margin-top:auto}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:46px;padding:10px 16px;border-radius:12px;font:600 15px var(--f-body);text-decoration:none;border:1.5px solid var(--ink);color:var(--ink);background:#fff;cursor:pointer}
+.btn.p{background:var(--ink);color:#fff}
+.btn.a{background:var(--amber);border-color:var(--amber);color:var(--ink)}
+.btn svg{width:18px;height:18px;flex-shrink:0}
+.btn:hover{filter:brightness(1.06)}
+
+/* ekip */
+.team{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin:0;padding:0;list-style:none}
+@media (max-width:640px){.team{grid-template-columns:minmax(0,1fr)}}
+.person{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px}
+.person .hd{display:flex;align-items:center;gap:12px}
+.av{flex-shrink:0;width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;font:700 18px var(--f-disp);color:#fff;background:var(--teal)}
+.person h3{margin:0;font-size:18px;line-height:1.25}
+.person .meta{font-size:13px;color:var(--muted);overflow-wrap:anywhere;line-height:1.45}
+.person .acts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:14px}
+.act{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;min-height:58px;border-radius:12px;border:1.5px solid var(--line);color:var(--ink);text-decoration:none;font-size:12.5px;font-weight:600;background:#F7FAF9}
+.act svg{width:20px;height:20px}
+.act:hover{border-color:var(--teal)}
+.act.wa svg{color:#1B8E4F}
+.team-all{margin-top:16px}
+
+.pilot{background:var(--ink);color:#fff;border-radius:22px;padding:24px;margin-top:28px;display:flex;flex-wrap:wrap;gap:16px;align-items:center;justify-content:space-between}
+.pilot h3{font-family:var(--f-head);font-size:24px;margin:0 0 6px}
+.pilot p{margin:0;color:#CFE0E4;max-width:52ch}
+
+footer{padding:28px 0 calc(28px + env(safe-area-inset-bottom,0px));color:var(--muted);font-size:14px;text-align:center}
+
+/* afiş görüntüleyici */
+.viewer{position:fixed;inset:0;z-index:60;background:rgba(6,17,30,.92);display:flex;flex-direction:column}
+.viewer .bar{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:10px 14px;color:#fff}
+.viewer .bar .btn{min-height:40px;padding:8px 14px}
+.viewer .sc{flex:1;overflow:auto;padding:0 12px 20px;-webkit-overflow-scrolling:touch}
+.viewer img{margin:0 auto;max-width:900px;width:100%;border-radius:8px}
+@media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+
+<div class="gate" id="gate" role="dialog" aria-modal="true" aria-labelledby="gate-q">
+  <div class="gate-in">
+    <svg class="mark" viewBox="0 0 96 96" aria-hidden="true"><path d="M48 8C76 8 90 34 86 58C82 80 64 90 48 90C32 90 14 80 10 58C6 34 20 8 48 8Z" fill="#14384A"/><path d="M48 8C76 8 90 34 86 58C82 80 64 90 48 90Z" fill="#0E7C86"/><path d="M48 22C62 24 72 40 72 58M48 22C34 24 24 40 24 58" fill="none" stroke="#fff" stroke-opacity=".5" stroke-width="2.5"/><path d="M48 38C54 48 58 54 58 60A10 10 0 0 1 38 60C38 54 42 48 48 38Z" fill="#F2B035"/></svg>
+    <h1>BİYO-<b>MİDYE</b></h1>
+    <p>Elektriksiz filtre kaseti · Electricity-free filter cassette</p>
+    <div class="q" id="gate-q">Dil seçin · Choose your language</div>
+    <div class="choices">
+      <button class="lang-btn" type="button" data-pick="tr"><span class="code">TR</span><span>Türkçe<small>Türkçe devam et</small></span></button>
+      <button class="lang-btn en" type="button" data-pick="en"><span class="code">EN</span><span>English<small>Continue in English</small></span></button>
+    </div>
+  </div>
+</div>
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="#top" aria-label="BİYO-MİDYE"><svg viewBox="0 0 96 96" aria-hidden="true"><path d="M48 8C76 8 90 34 86 58C82 80 64 90 48 90C32 90 14 80 10 58C6 34 20 8 48 8Z" fill="#14384A"/><path d="M48 8C76 8 90 34 86 58C82 80 64 90 48 90Z" fill="#0E7C86"/><path d="M48 38C54 48 58 54 58 60A10 10 0 0 1 38 60C38 54 42 48 48 38Z" fill="#F2B035"/></svg><span>BİYO-<b>MİDYE</b></span></a>
+    <button class="switch" type="button" id="switch" data-i18n="switch">English</button>
+  </div>
+</header>
+
+<main id="top">
+  <div class="hero">
+    <div class="wrap">
+      <div class="kicker" data-i18n="kicker">Elektriksiz pasif filtre</div>
+      <h2 data-i18n="title">Kirliliği kaynağında tutan filtre kaseti</h2>
+      <p class="lead" data-i18n="lead">Ahır ve köy kanallarından gelen amonyak ve metaller dereye karışmadan kasette kalır. Midyeden ilham, doğadan malzeme.</p>
+      <ul class="chips">
+        <li data-i18n="c1">Elektrik yok</li><li data-i18n="c2">Pompa yok</li><li data-i18n="c3">Kimyasal yok</li>
+      </ul>
+      <div class="video"><video id="vid" controls playsinline preload="metadata" poster="media/video_poster_tr.jpg" aria-label=""><source id="vid-src" src="media/video_tr.mp4" type="video/mp4"></video></div>
+      <div class="vcap" data-i18n="vcap">27 saniyelik saha animasyonu: kaset kanala nasıl kurulur ve suyu nasıl temizler.</div>
+    </div>
+  </div>
+
+  <section id="how">
+    <div class="wrap">
+      <h2 class="sec-title" data-i18n="how-t">Nasıl çalışır?</h2>
+      <p class="sec-sub" data-i18n="how-s">Üç adımda, elektriksiz.</p>
+      <ol class="steps">
+        <li class="step"><div class="ph"><img src="media/kanal.webp" alt="" data-i18n-alt="img1" loading="lazy"></div><div class="tx"><h3><span class="num">1</span><span data-i18n="s1t">Kanala yerleşir</span></h3><p data-i18n="s1p">Ahır ve köy çıkışından dereye giden küçük kanala, akışa enine konur.</p></div></li>
+        <li class="step"><div class="ph"><img src="media/granul.webp" alt="" data-i18n-alt="img2" loading="lazy"></div><div class="tx"><h3><span class="num">2</span><span data-i18n="s2t">Kirliliği yakalar</span></h3><p data-i18n="s2p">Su kasetin içinden geçer; amonyak ve metaller granüllerin yüzeyine tutunur.</p></div></li>
+        <li class="step"><div class="ph contain"><img src="media/kaset.webp" alt="" data-i18n-alt="img3" loading="lazy"></div><div class="tx"><h3><span class="num">3</span><span data-i18n="s3t">Dolunca değişir</span></h3><p data-i18n="s3p">Kaset midye gibi açılır, dolan torba çıkar, yenisi takılır.</p></div></li>
+      </ol>
+      <div class="layers">
+        <div class="layer"><div class="c" style="border-color:#B8A98A"><img src="media/mat_pomza.webp" alt="" loading="lazy"></div><b data-i18n="l1">Pomza</b><span data-i18n="l1s">Çamuru süzer</span></div>
+        <div class="layer"><div class="c" style="border-color:#0E7C86"><img src="media/mat_zeolit.webp" alt="" loading="lazy"></div><b data-i18n="l2">Zeolit</b><span data-i18n="l2s">Amonyağı tutar</span></div>
+        <div class="layer"><div class="c" style="border-color:#1B2B33"><img src="media/mat_biyokomur.webp" alt="" loading="lazy"></div><b data-i18n="l3">Biyokömür</b><span data-i18n="l3s">Metali tutar</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="explore" id="explore">
+    <div class="wrap">
+      <h2 class="sec-title" data-i18n="ex-t">Keşfet</h2>
+      <p class="sec-sub" data-i18n="ex-s">Simülatörü dene, afişi ve sunumu indir.</p>
+      <div class="tiles">
+        <div class="tile">
+          <div class="ph"><img src="media/hero_kesit.webp" alt="" data-i18n-alt="img4" loading="lazy"></div>
+          <div class="tx"><h3 data-i18n="t1">Canlı 3D simülatör</h3><p data-i18n="t1p">Akışı ve kirliliği değiştir, kasetin ne kadar temizlediğini canlı izle.</p>
+            <div class="btns"><a class="btn p" id="sim-link" href="../?lang=tr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2l9 5v10l-9 5-9-5V7z"/><path d="M12 22V12M21 7l-9 5-9-5"/></svg><span data-i18n="t1b">Simülatörü aç</span></a></div></div>
+        </div>
+        <div class="tile">
+          <div class="ph poster"><img id="poster-thumb" src="media/poster_tr_thumb.jpg" alt="" data-i18n-alt="img5" loading="lazy"></div>
+          <div class="tx"><h3 data-i18n="t2">Afiş</h3><p data-i18n="t2p">Projeyi tek sayfada anlatan A3 afiş.</p>
+            <div class="btns"><button class="btn p" type="button" id="poster-open"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></svg><span data-i18n="t2b">Görüntüle</span></button><a class="btn" id="poster-pdf" href="media/BIYO-MIDYE_Afis_TR.pdf" download><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg><span data-i18n="pdf">PDF indir</span></a></div></div>
+        </div>
+        <div class="tile">
+          <div class="ph"><img id="deck-thumb" src="media/deck_tr_thumb.jpg" alt="" data-i18n-alt="img6" loading="lazy"></div>
+          <div class="tx"><h3 data-i18n="t3">Sunum</h3><p data-i18n="t3p">Sorun, çözüm, reçete, bütçe ve etki: 11 slayt.</p>
+            <div class="btns"><a class="btn p" id="deck-pdf" href="media/BIYO-MIDYE_Sunum_TR.pdf" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6"/></svg><span data-i18n="t3b">Sunumu aç (PDF)</span></a></div></div>
+        </div>
+        <div class="tile">
+          <div class="ph"><img id="vid-thumb" src="media/video_poster_tr.jpg" alt="" data-i18n-alt="img7" loading="lazy"></div>
+          <div class="tx"><h3 data-i18n="t4">Saha animasyonu</h3><p data-i18n="t4p">Kurulumdan torba değişimine, 27 saniyede.</p>
+            <div class="btns"><a class="btn p" href="#top" id="vid-watch"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg><span data-i18n="t4b">İzle</span></a><a class="btn" id="vid-dl" href="media/video_tr.mp4" download><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg><span data-i18n="dl">İndir</span></a></div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="team">
+    <div class="wrap">
+      <h2 class="sec-title" data-i18n="tm-t">Ekip ve iletişim</h2>
+      <p class="sec-sub" data-i18n="tm-s">Bize doğrudan ulaşabilirsiniz.</p>
+      <ul class="team" id="team-list"></ul>
+      <div class="team-all"><a class="btn a" href="contacts/biyo-midye-team.vcf" download><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6M22 11h-6"/></svg><span data-i18n="all">Tüm ekibi rehbere ekle</span></a></div>
+      <div class="pilot">
+        <div><h3 data-i18n="pl-t">Pilot ortağı arıyoruz</h3><p data-i18n="pl-p">Serçeme suyuyla laboratuvar testi ve sahada pilot için üniversite, belediye ve kurumlarla çalışmak istiyoruz.</p></div>
+        <a class="btn a" id="pilot-mail" href="mailto:furkanselimozkan@gmail.com"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 6l-10 7L2 6"/></svg><span data-i18n="pl-b">Bize yazın</span></a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer><div class="wrap"><span data-i18n="ft">Serçeme Çayı → Karasu → Fırat · Erzurum</span> · BİYO-MİDYE 2026</div></footer>
+
+<div class="viewer" id="viewer" hidden role="dialog" aria-modal="true" aria-labelledby="viewer-t">
+  <div class="bar"><strong id="viewer-t" data-i18n="t2">Afiş</strong><span class="btns" style="margin:0"><a class="btn a" id="viewer-pdf" href="media/BIYO-MIDYE_Afis_TR.pdf" download><span data-i18n="pdf">PDF indir</span></a><button class="btn" type="button" id="viewer-close" data-i18n="close">Kapat</button></span></div>
+  <div class="sc"><img id="viewer-img" src="" alt="" data-i18n-alt="img5"></div>
+</div>
+
+<script>
+(function(){
+var T = {
+ tr:{switch:'English',kicker:'Elektriksiz pasif filtre',title:'Kirliliği kaynağında tutan filtre kaseti',
+  lead:'Ahır ve köy kanallarından gelen amonyak ve metaller dereye karışmadan kasette kalır. Midyeden ilham, doğadan malzeme.',
+  c1:'Elektrik yok',c2:'Pompa yok',c3:'Kimyasal yok',vcap:'27 saniyelik saha animasyonu: kaset kanala nasıl kurulur ve suyu nasıl temizler.',
+  'how-t':'Nasıl çalışır?','how-s':'Üç adımda, elektriksiz.',s1t:'Kanala yerleşir',s1p:'Ahır ve köy çıkışından dereye giden küçük kanala, akışa enine konur.',
+  s2t:'Kirliliği yakalar',s2p:'Su kasetin içinden geçer; amonyak ve metaller granüllerin yüzeyine tutunur.',s3t:'Dolunca değişir',s3p:'Kaset midye gibi açılır, dolan torba çıkar, yenisi takılır.',
+  l1:'Pomza',l1s:'Çamuru süzer',l2:'Zeolit',l2s:'Amonyağı tutar',l3:'Biyokömür',l3s:'Metali tutar',
+  'ex-t':'Keşfet','ex-s':'Simülatörü dene, afişi ve sunumu indir.',t1:'Canlı 3D simülatör',t1p:'Akışı ve kirliliği değiştir, kasetin ne kadar temizlediğini canlı izle.',t1b:'Simülatörü aç',
+  t2:'Afiş',t2p:'Projeyi tek sayfada anlatan A3 afiş.',t2b:'Görüntüle',pdf:'PDF indir',t3:'Sunum',t3p:'Sorun, çözüm, reçete, bütçe ve etki: 11 slayt.',t3b:'Sunumu aç (PDF)',
+  t4:'Saha animasyonu',t4p:'Kurulumdan torba değişimine, 27 saniyede.',t4b:'İzle',dl:'İndir',
+  'tm-t':'Ekip ve iletişim','tm-s':'Bize doğrudan ulaşabilirsiniz.',all:'Tüm ekibi rehbere ekle',call:'Ara',wa:'WhatsApp',mail:'E-posta',save:'Rehbere ekle',
+  'pl-t':'Pilot ortağı arıyoruz','pl-p':'Serçeme suyuyla laboratuvar testi ve sahada pilot için üniversite, belediye ve kurumlarla çalışmak istiyoruz.','pl-b':'Bize yazın',
+  ft:'Serçeme Çayı → Karasu → Fırat · Erzurum',close:'Kapat',
+  img1:'Kanala yerleştirilmiş Biyo-Midye kasetleri',img2:'Zeolit ve biyokömür granüllerine tutunan amonyak ve metal iyonları',img3:'Midye gibi açılan Biyo-Midye kaseti ve filtre torbaları',
+  img4:'Simülatörden kesit: kirli su kasete girer, temiz su çıkar',img5:'Biyo-Midye afişi',img6:'Sunumun kapak slaytı',img7:'Saha animasyonundan bir kare',
+  video:'Biyo-Midye saha animasyonu',mailsub:'Biyo-Midye pilot iş birliği',title_doc:'BİYO-MİDYE · Proje kartı'},
+ en:{switch:'Türkçe',kicker:'Passive filter, no electricity',title:'A filter cassette that stops pollution at the source',
+  lead:'Ammonia and metals from barn and village canals stay in the cassette before they reach the stream. Inspired by mussels, made from nature.',
+  c1:'No electricity',c2:'No pump',c3:'No chemicals',vcap:'A 27-second field animation: how the cassette is installed in a canal and how it cleans the water.',
+  'how-t':'How does it work?','how-s':'Three steps, no electricity.',s1t:'Placed in the canal',s1p:'It sits across the flow of a small canal running from a barn or village to the stream.',
+  s2t:'Captures pollution',s2p:'Water flows through the cassette; ammonia and metals stick to the surface of the granules.',s3t:'Replaced when full',s3p:'The cassette opens like a mussel shell; full bags come out and new ones go in.',
+  l1:'Pumice',l1s:'Filters out mud',l2:'Zeolite',l2s:'Traps ammonia',l3:'Biochar',l3s:'Traps metals',
+  'ex-t':'Explore','ex-s':'Try the simulator, download the poster and the slides.',t1:'Live 3D simulator',t1p:'Change the flow and pollution and watch how much the cassette cleans, live.',t1b:'Open the simulator',
+  t2:'Poster',t2p:'An A3 poster that explains the project on one page.',t2b:'View',pdf:'Download PDF',t3:'Presentation',t3p:'Problem, solution, recipe, budget and impact: 11 slides.',t3b:'Open the slides (PDF)',
+  t4:'Field animation',t4p:'From installation to bag replacement, in 27 seconds.',t4b:'Watch',dl:'Download',
+  'tm-t':'Team and contact','tm-s':'You can reach us directly.',all:'Save the whole team to contacts',call:'Call',wa:'WhatsApp',mail:'Email',save:'Save contact',
+  'pl-t':'Looking for pilot partners','pl-p':'We want to work with universities, municipalities and institutions on a lab test with Serçeme water and a field pilot.','pl-b':'Write to us',
+  ft:'Serçeme Stream → Karasu → Euphrates · Erzurum, Türkiye',close:'Close',
+  img1:'Biyo-Midye cassettes installed in a canal',img2:'Ammonia and metal ions sticking to zeolite and biochar granules',img3:'The Biyo-Midye cassette, which opens like a mussel, with its filter bags',
+  img4:'Simulator cross-section: polluted water enters the cassette, clean water leaves',img5:'Biyo-Midye poster',img6:'Cover slide of the presentation',img7:'A frame from the field animation',
+  video:'Biyo-Midye field animation',mailsub:'Biyo-Midye pilot partnership',title_doc:'BİYO-MİDYE · Project card'}
+};
+var FILES = {
+ tr:{video:'media/video_tr.mp4',vposter:'media/video_poster_tr.jpg',poster:'media/poster_tr.jpg',pthumb:'media/poster_tr_thumb.jpg',ppdf:'media/BIYO-MIDYE_Afis_TR.pdf',deck:'media/BIYO-MIDYE_Sunum_TR.pdf',dthumb:'media/deck_tr_thumb.jpg',sim:'../?lang=tr'},
+ en:{video:'media/video_en.mp4',vposter:'media/video_poster_en.jpg',poster:'media/poster_en.jpg',pthumb:'media/poster_en_thumb.jpg',ppdf:'media/BIYO-MIDYE_Poster_EN.pdf',deck:'media/BIYO-MIDYE_Presentation_EN.pdf',dthumb:'media/deck_en_thumb.jpg',sim:'../?lang=en'}
+};
+var TEAM = [
+ {n:'Furkan Selim Özkan',tel:'+905340872928',mail:'furkanselimozkan@gmail.com',vcf:'contacts/furkan-selim.vcf',c:'#0E7C86'},
+ {n:'İlayda',c:'#F2B035'},
+ {n:'Sevim Sude Eroğlu',tel:'+905387988086',mail:'eroglusude23@gmail.com',vcf:'contacts/sude.vcf',c:'#2B8FC0'},
+ {n:'Zeynep Çağırcı',tel:'+905078704307',mail:'zeynep12cgr@gmail.com',vcf:'contacts/zeynep.vcf',c:'#3E9160'},
+ {n:'Hasan Arıkboğa',tel:'+905052434380',mail:'hasanarkb04@gmail.com',vcf:'contacts/hasan.vcf',c:'#8A5A3B'}
+];
+var ICON = {
+ call:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.8 2z"/></svg>',
+ wa:'<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.2-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.3.8 3.2.6.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.2-1.2-.1-.1-.3-.2-.5-.3z"/></svg>',
+ mail:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 6l-10 7L2 6"/></svg>',
+ save:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6M22 11h-6"/></svg>'
+};
+var lang = null;
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+function renderTeam(){
+  var d=T[lang], ul=document.getElementById('team-list'), h='';
+  TEAM.forEach(function(p){
+    var ini=p.n.charAt(0);
+    h+='<li class="person"><div class="hd"><span class="av" style="background:'+p.c+'" aria-hidden="true">'+esc(ini)+'</span><div><h3>'+esc(p.n)+'</h3>'+(p.tel?'<div class="meta">'+esc(p.tel.replace(/^\+90(\d{3})(\d{3})(\d{2})(\d{2})$/,'+90 $1 $2 $3 $4'))+'<br>'+esc(p.mail)+'</div>':'')+'</div></div>';
+    if(p.tel){
+      var w=p.tel.replace('+','');
+      h+='<div class="acts">'
+        +'<a class="act" href="tel:'+p.tel+'" aria-label="'+esc(d.call+': '+p.n)+'">'+ICON.call+'<span>'+d.call+'</span></a>'
+        +'<a class="act wa" href="https://wa.me/'+w+'" target="_blank" rel="noopener" aria-label="'+esc(d.wa+': '+p.n)+'">'+ICON.wa+'<span>'+d.wa+'</span></a>'
+        +'<a class="act" href="mailto:'+p.mail+'" aria-label="'+esc(d.mail+': '+p.n)+'">'+ICON.mail+'<span>'+d.mail+'</span></a>'
+        +'<a class="act" href="'+p.vcf+'" download aria-label="'+esc(d.save+': '+p.n)+'">'+ICON.save+'<span>'+d.save+'</span></a>'
+        +'</div>';
+    }
+    h+='</li>';
+  });
+  ul.innerHTML=h;
+}
+function apply(l){
+  lang = l==='en' ? 'en' : 'tr';
+  var d=T[lang], f=FILES[lang];
+  document.documentElement.lang=lang; document.title=d.title_doc;
+  document.querySelectorAll('[data-i18n]').forEach(function(el){ var k=el.getAttribute('data-i18n'); if(d[k]!=null) el.textContent=d[k]; });
+  document.querySelectorAll('[data-i18n-alt]').forEach(function(el){ el.alt=d[el.getAttribute('data-i18n-alt')]||''; });
+  var v=document.getElementById('vid'), s=document.getElementById('vid-src');
+  if(s.getAttribute('src')!==f.video){ s.setAttribute('src',f.video); v.poster=f.vposter; v.load(); }
+  v.setAttribute('aria-label',d.video);
+  document.getElementById('vid-thumb').src=f.vposter;
+  document.getElementById('vid-dl').href=f.video;
+  document.getElementById('sim-link').href=f.sim;
+  document.getElementById('poster-thumb').src=f.pthumb;
+  document.getElementById('poster-pdf').href=f.ppdf;
+  document.getElementById('viewer-pdf').href=f.ppdf;
+  document.getElementById('deck-pdf').href=f.deck;
+  document.getElementById('deck-thumb').src=f.dthumb;
+  document.getElementById('pilot-mail').href='mailto:furkanselimozkan@gmail.com?subject='+encodeURIComponent(d.mailsub);
+  renderTeam();
+  try{ var u=new URL(location.href); u.searchParams.set('lang',lang); history.replaceState(null,'',u); }catch(e){}
+}
+var gate=document.getElementById('gate');
+function closeGate(){ gate.hidden=true; document.body.style.overflow=''; }
+function openGate(){ gate.hidden=false; document.body.style.overflow='hidden'; var b=gate.querySelector('[data-pick]'); if(b) b.focus(); }
+gate.querySelectorAll('[data-pick]').forEach(function(b){ b.addEventListener('click',function(){ apply(b.getAttribute('data-pick')); closeGate(); window.scrollTo(0,0); }); });
+document.getElementById('switch').addEventListener('click',function(){ apply(lang==='en'?'tr':'en'); });
+var viewer=document.getElementById('viewer');
+document.getElementById('poster-open').addEventListener('click',function(){ document.getElementById('viewer-img').src=FILES[lang].poster; viewer.hidden=false; document.body.style.overflow='hidden'; document.getElementById('viewer-close').focus(); });
+function closeViewer(){ viewer.hidden=true; document.body.style.overflow=''; document.getElementById('poster-open').focus(); }
+document.getElementById('viewer-close').addEventListener('click',closeViewer);
+viewer.addEventListener('keydown',function(e){ if(e.key==='Escape') closeViewer(); });
+document.getElementById('vid-watch').addEventListener('click',function(e){ e.preventDefault(); var v=document.getElementById('vid'); v.scrollIntoView({block:'center'}); try{ v.play(); }catch(err){} });
+var q=(new URLSearchParams(location.search).get('lang')||'').toLowerCase();
+if(q==='tr'||q==='en'){ apply(q); closeGate(); } else { apply('tr'); openGate(); }
+})();
+</script>
+</body>
+</html>

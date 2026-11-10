@@ -1,8 +1,10 @@
-# Biyo-Midye saha simülatörü
+# Biyo-Midye
 
-Biyo-Midye projesi için etkileşimli 3D simülasyon.
-Kanal başındaki elektriksiz filtre kasetini; akış, amonyak, metal, tortu ve çıkış savağı kaydırıcılarıyla canlı ölçüm panelleri eşliğinde gösterir.
+Interactive material for the Biyo-Midye project: an electricity-free filter cassette that keeps ammonia and metals from barn and village canals out of streams.
 
-Canlı sayfa: https://furkanselimozkan07.github.io/My_AI_Projects/biyo-midye/
+- **Project card** (`go/`): the page the posters' QR code opens. It asks for a language first (Türkçe / English), then shows the field animation, the 3D simulator, the poster, the slides and the team's contact details in that language.
+  https://furkanselimozkan07.github.io/My_AI_Projects/biyo-midye/go/
+- **3D field simulator** (`index.html`): add `?lang=en` for English.
+  https://furkanselimozkan07.github.io/My_AI_Projects/biyo-midye/
 
-Not: temsilî bir modeldir; kesin değerler Serçeme suyuyla yapılacak sütun deneyiyle ölçülecektir.
+The simulator is a literature-based preliminary model; real values will be measured in a column test with Serçeme Stream water.
