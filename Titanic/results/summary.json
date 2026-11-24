@@ -1,0 +1,6 @@
+{
+  "best_model": "Gradient Boosting",
+  "cv_accuracy": 0.8372,
+  "folds": 5,
+  "seed": 42
+}

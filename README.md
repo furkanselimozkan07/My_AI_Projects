@@ -11,6 +11,17 @@ Team project from a Hack Day event, built as a live Kaggle competition: predict 
 - **EDA and feature engineering:** filled missing ages using the title extracted from each passenger's name (Mr, Mrs, Miss, ...), plus other cleanup and visualizations with Seaborn and Matplotlib.
 - **Models compared:** Gaussian Naive Bayes, Bernoulli Naive Bayes, Random Forest and Gradient Boosting (scikit-learn). Gradient Boosting performed best and was retrained on the full training set.
 - **Output:** `TitanicPredict.csv`, the Kaggle submission file.
+- **Reproducible script:** `train.py` re-implements the pipeline without leakage (age/fare/embarked imputation is learned inside each CV fold), adds `FamilySize`/`IsAlone`, compares models with stratified 5-fold CV and writes permutation importances to `results/`. Run `pip install -r requirements.txt && python train.py`; tests: `pytest tests`.
+
+| Model (5-fold CV accuracy) | Mean | Std |
+| --- | --- | --- |
+| Gradient Boosting | 0.837 | 0.017 |
+| Logistic Regression | 0.827 | 0.007 |
+| Random Forest | 0.820 | 0.015 |
+| Gaussian NB | 0.813 | 0.013 |
+| Bernoulli NB | 0.792 | 0.015 |
+
+Most important feature (permutation): the passenger title, followed by class and fare.
 
 | File | Content |
 | --- | --- |
@@ -18,6 +29,7 @@ Team project from a Hack Day event, built as a live Kaggle competition: predict 
 | `Titanic_Machine_Learning_Classification-Omer-Can.ipynb` | My teammate's notebook |
 | `Hack Day Titanic Project.pptx` | Team presentation |
 | `ttrain.csv`, `ttest.csv` | Kaggle training and test data |
+| `train.py`, `tests/`, `results/` | Reproducible script, tests, CV results |
 
 **Stack:** Python, pandas, scikit-learn, Seaborn, Matplotlib
 

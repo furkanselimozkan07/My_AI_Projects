@@ -5,7 +5,7 @@ A collection of small, reproducible, self-contained ML mini-projects. Each folde
 
 ## Backlog
 - [x] Breast cancer diagnosis: model comparison, recall-tuned threshold, explainability
-- [ ] Titanic: reproducible `train.py` script from the notebook, with CV and feature importance
+- [x] Titanic: reproducible `train.py` script from the notebook, with CV and feature importance
 - [ ] Wine quality regression vs. classification (UCI, downloaded by code)
 - [ ] Hyperparameter search (GridSearch/Optuna) added to breast-cancer-diagnosis
 - [ ] Probability calibration curves for breast-cancer-diagnosis
@@ -18,4 +18,5 @@ A collection of small, reproducible, self-contained ML mini-projects. Each folde
 - [ ] Clustering: customer segmentation with k-means/DBSCAN
 
 ## Changelog
+- 2026-11-24: Titanic: added leakage-free `train.py` (5-model stratified CV, permutation importance, tests). Best: Gradient Boosting, CV accuracy 0.837.
 - 2026-11-10: Added `breast-cancer-diagnosis` (5-model CV comparison, threshold tuning, permutation importance, tests).
